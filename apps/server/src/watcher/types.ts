@@ -22,3 +22,11 @@ export interface PendingChange {
   userSource: UserSource;
   occurredAt: string;
 }
+
+/** Structured logger subset (pino-compatible). */
+export interface WatcherLog {
+  debug(obj: object, msg: string): void;
+  info(obj: object, msg: string): void;
+  warn(obj: object, msg: string): void;
+  error(obj: object, msg: string): void;
+}

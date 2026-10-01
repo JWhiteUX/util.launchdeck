@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
-import type { ApiError, Campaign } from '@launchdeck/shared';
+import type { ApiError, CampaignView } from '@launchdeck/shared';
 import { campaign as campaignSchema } from '@launchdeck/shared';
 import { testApp, validInput } from './helpers.ts';
 
@@ -15,7 +15,7 @@ afterEach(async () => {
 
 async function create(body: unknown = validInput) {
   const res = await app.inject({ method: 'POST', url: '/api/campaigns', payload: body as object });
-  return { res, body: res.json<Campaign>() };
+  return { res, body: res.json<CampaignView>() };
 }
 
 describe('health', () => {
@@ -30,7 +30,9 @@ describe('campaign CRUD', () => {
   it('creates, reads, lists, updates and deletes', async () => {
     const { res, body: created } = await create();
     expect(res.statusCode).toBe(201);
-    expect(campaignSchema.parse(created)).toEqual(created);
+    const { badge, badgeReason, unreviewedCount, ...stored } = created;
+    expect(campaignSchema.parse(created)).toEqual(stored);
+    expect({ badge, badgeReason, unreviewedCount }).toEqual({ badge: 'green', badgeReason: 'ok', unreviewedCount: 0 });
     expect(created).toMatchObject({
       name: 'Fall launch',
       owner: 'jdoe',
@@ -53,7 +55,7 @@ describe('campaign CRUD', () => {
       payload: { ...validInput, name: 'Fall launch v2', status: 'in_progress' },
     });
     expect(put.statusCode).toBe(200);
-    const updated = put.json<Campaign>();
+    const updated = put.json<CampaignView>();
     expect(updated).toMatchObject({ id: created.id, name: 'Fall launch v2', status: 'in_progress' });
     expect(updated.createdAt).toBe(created.createdAt);
     expect(updated.updatedAt > created.updatedAt).toBe(true);
@@ -67,7 +69,7 @@ describe('campaign CRUD', () => {
   it('lists campaigns ordered by start date', async () => {
     await create({ ...validInput, name: 'Later', startDate: '2026-11-01', launchDate: '2026-11-05' });
     await create({ ...validInput, name: 'Sooner' });
-    const names = (await app.inject({ method: 'GET', url: '/api/campaigns' })).json<Campaign[]>().map((c) => c.name);
+    const names = (await app.inject({ method: 'GET', url: '/api/campaigns' })).json<CampaignView[]>().map((c) => c.name);
     expect(names).toEqual(['Sooner', 'Later']);
   });
 
@@ -83,7 +85,7 @@ describe('campaign CRUD', () => {
       url: `/api/campaigns/${c.id}`,
       payload: { ...validInput, folders: ['/content/dam/brand/new', '/content/dam/brand/assets'] },
     });
-    expect(res.json<Campaign>().folders).toEqual(['/content/dam/brand/assets', '/content/dam/brand/new']);
+    expect(res.json<CampaignView>().folders).toEqual(['/content/dam/brand/assets', '/content/dam/brand/new']);
     const rows = app.db
       .prepare('SELECT folder_path FROM campaign_folders WHERE campaign_id = ? ORDER BY folder_path')
       .pluck()
@@ -102,12 +104,12 @@ describe('campaign CRUD', () => {
     const { body: c } = await create();
     const res = await app.inject({ method: 'POST', url: `/api/campaigns/${c.id}/review` });
     expect(res.statusCode).toBe(200);
-    const reviewed = res.json<Campaign>();
+    const reviewed = res.json<CampaignView>();
     expect(reviewed.reviewedAt).not.toBeNull();
     expect(reviewed.reviewedAt! > c.createdAt).toBe(true);
     expect(reviewed.updatedAt).toBe(reviewed.reviewedAt);
     const again = await app.inject({ method: 'GET', url: `/api/campaigns/${c.id}` });
-    expect(again.json<Campaign>().reviewedAt).toBe(reviewed.reviewedAt);
+    expect(again.json<CampaignView>().reviewedAt).toBe(reviewed.reviewedAt);
   });
 
   it('delete cascades campaign_folders but keeps shared folder state', async () => {
