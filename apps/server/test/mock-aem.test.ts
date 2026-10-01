@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   AuditAccessDeniedError,
   FolderNotFoundError,
+  HttpAemClient,
   InvalidAemPathError,
   MockAemClient,
   createAemClient,
@@ -232,9 +233,16 @@ describe('createAemClient', () => {
     expect(existsSync(join(FIXTURES_DIR, 'content/dam/brand/empty-soon/_folder.json'))).toBe(true);
   });
 
-  it('throws for live mode until Phase 5', () => {
-    expect(() => createAemClient({ AEM_MODE: 'live', AEM_FIXTURES_DIR: FIXTURES_DIR })).toThrow(
-      'AEM_MODE=live is implemented in Phase 5',
-    );
+  it('returns an HttpAemClient in live mode and refuses an incomplete live config', () => {
+    const live = { AEM_MODE: 'live', AEM_FIXTURES_DIR: FIXTURES_DIR } as const;
+    expect(() => createAemClient(live)).toThrow('AEM_HOST is required when AEM_MODE=live');
+    const client = createAemClient({
+      ...live,
+      AEM_HOST: 'https://author.example.com',
+      AEM_FLAVOR: 'cloud',
+      AEM_AUTH: 'devtoken',
+      AEM_DEV_TOKEN: 'x',
+    });
+    expect(client).toBeInstanceOf(HttpAemClient);
   });
 });

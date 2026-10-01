@@ -2,9 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ApiError } from '@launchdeck/shared';
 import type { AemClient } from '../aem/AemClient.ts';
 import { FolderNotFoundError } from '../aem/AemClient.ts';
-import { InvalidAemPathError, normalizeAemPath } from '../aem/MockAemClient.ts';
-
-const DAM_ROOT = '/content/dam';
+import { DAM_ROOT, InvalidAemPathError, normalizeAemPath } from '../aem/paths.ts';
 
 export async function folderRoutes(app: FastifyInstance, opts: { client: AemClient }) {
   app.get<{ Querystring: { path?: string } }>('/folders', async (req, reply) => {

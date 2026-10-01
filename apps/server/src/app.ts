@@ -2,11 +2,11 @@ import Fastify from 'fastify';
 import type { FastifyServerOptions } from 'fastify';
 import type { AemClient } from './aem/AemClient.ts';
 import { createAemClient } from './aem/index.ts';
+import type { AemEnv } from './aem/index.ts';
 import { isoNow } from './clock.ts';
 import { openDb } from './db/index.ts';
 import type { Db } from './db/index.ts';
 import { loadEnv } from './env.ts';
-import type { Env } from './env.ts';
 import { createCampaignRepo } from './repo/campaigns.ts';
 import { createCampaignViews } from './repo/campaignViews.ts';
 import { createEventRepo } from './repo/events.ts';
@@ -38,7 +38,7 @@ export interface BuildAppOptions {
   now?: () => string;
   /** Injected client (tests). Otherwise created once from `env` (or loadEnv()). */
   aemClient?: AemClient;
-  env?: Pick<Env, 'AEM_MODE' | 'AEM_FIXTURES_DIR'>;
+  env?: AemEnv;
   intervalSec?: number;
   /** Start the interval watcher when the app is ready. Tests drive `app.scheduler.pollNow` instead. */
   startScheduler?: boolean;
@@ -67,7 +67,7 @@ export async function buildApp(opts: BuildAppOptions) {
   const now = opts.now ?? isoNow;
   const db = openDb(opts.dbPath);
   const aem =
-    opts.aemClient ?? createAemClient(opts.env ?? loadEnv(), { warn: (msg) => app.log.warn(msg) });
+    opts.aemClient ?? createAemClient(opts.env ?? loadEnv(), app.log);
 
   const bus = new Bus();
   const poller = createPoller({ db, client: aem, log: app.log, now });

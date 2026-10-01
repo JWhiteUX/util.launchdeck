@@ -4,6 +4,9 @@ import { isAbsolute, posix, relative, resolve, sep } from 'node:path';
 import type { AemClient, AssetEntry, AssetHit, AuditEvent, FolderEntry, FolderListing } from './AemClient.ts';
 import { AuditAccessDeniedError, FolderNotFoundError } from './AemClient.ts';
 import { mimeFromName } from './mime.ts';
+import { DAM_ROOT, InvalidAemPathError, normalizeAemPath } from './paths.ts';
+
+export { InvalidAemPathError, normalizeAemPath };
 
 export interface MockAemLogger {
   warn(msg: string): void;
@@ -13,13 +16,6 @@ export interface MockAemClientOptions {
   rootDir: string;
   defaultUser?: string;
   logger?: MockAemLogger;
-}
-
-export class InvalidAemPathError extends Error {
-  constructor(public readonly aemPath: string) {
-    super(`Invalid AEM path: ${aemPath}`);
-    this.name = 'InvalidAemPathError';
-  }
 }
 
 interface MetaFile {
@@ -33,7 +29,6 @@ interface AuditFile {
   defaultUser?: string;
 }
 
-const DAM_ROOT = '/content/dam';
 const isHidden = (name: string) => name.startsWith('_') || name.startsWith('.');
 const byKey = <T>(key: (t: T) => string) => (a: T, b: T) => (key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0);
 
@@ -188,16 +183,6 @@ export class MockAemClient implements AemClient {
       return null;
     }
   }
-}
-
-/** Validates and normalizes a JCR path; it must live under /content/dam and contain no `..`. */
-export function normalizeAemPath(path: string): string {
-  if (!path.startsWith('/') || path.includes('\0') || path.split('/').includes('..')) {
-    throw new InvalidAemPathError(path);
-  }
-  const normalized = posix.normalize(path).replace(/\/+$/, '');
-  if (normalized !== DAM_ROOT && !normalized.startsWith(`${DAM_ROOT}/`)) throw new InvalidAemPathError(path);
-  return normalized;
 }
 
 function isNodeError(err: unknown): err is NodeJS.ErrnoException {

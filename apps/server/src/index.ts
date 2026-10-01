@@ -1,5 +1,6 @@
 import { loadEnv } from './env.ts';
 import { buildApp } from './app.ts';
+import { parseAemHost } from './aem/host.ts';
 
 const env = loadEnv();
 const app = await buildApp({
@@ -30,7 +31,13 @@ process.on('SIGTERM', () => void shutdown('SIGTERM'));
 try {
   await app.listen({ host: '127.0.0.1', port: env.PORT });
   app.log.info(
-    { aemMode: env.AEM_MODE, aemFlavor: env.AEM_FLAVOR ?? null, intervalSec: env.WATCH_INTERVAL_SEC },
+    {
+      aemMode: env.AEM_MODE,
+      ...(env.AEM_MODE === 'live' && env.AEM_HOST
+        ? { aemHost: new URL(parseAemHost(env.AEM_HOST)).origin, aemFlavor: env.AEM_FLAVOR, aemAuth: env.AEM_AUTH }
+        : {}),
+      intervalSec: env.WATCH_INTERVAL_SEC,
+    },
     'watcher started',
   );
 } catch (err) {
