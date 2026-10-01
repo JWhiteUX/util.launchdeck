@@ -1,0 +1,210 @@
+/* frappe-gantt base CSS (aliased in vite.config.ts). */
+@import 'frappe-gantt/style.css';
+
+/* Ferrite overrides (styles.md → Dashboard mappings → Gantt). Tokens only. */
+
+.gantt-view {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  /* The SVG is wider than the page; keep its width out of the layout so only the chart scrolls. */
+  contain: inline-size;
+  min-width: 0;
+}
+
+.gantt-view__chart { min-width: 0; overflow: hidden; }
+
+/* ── Toolbar + segmented control ─────────────────────────── */
+.gantt-view__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-4);
+}
+.gantt-scale {
+  display: flex;
+  border: var(--border-strong);
+  border-radius: var(--radius-1);
+}
+.gantt-scale__item {
+  flex: 1;
+  min-width: 72px;
+  height: var(--control-h-segmented);
+  padding: 0 var(--space-4);
+  border: none;
+  border-left: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-spec);
+  letter-spacing: var(--tracking-label);
+  cursor: pointer;
+  transition: background-color var(--dur-base) var(--ease-standard),
+    color var(--dur-base) var(--ease-standard);
+}
+.gantt-scale__item:first-child { border-left: none; }
+.gantt-scale__item:hover { background: var(--color-bg-alt); }
+.gantt-scale__item[aria-pressed='true'] { background: var(--color-text); color: var(--color-bg); }
+
+/* ── Chart: frappe variables remapped to Ferrite tokens ──── */
+.gantt-view .gantt-container {
+  --g-arrow-color: var(--color-text);
+  --g-bar-color: var(--color-text);
+  --g-bar-border: var(--color-text);
+  --g-tick-color: var(--color-border);
+  --g-tick-color-thick: var(--color-border);
+  --g-actions-background: var(--color-bg-inset);
+  --g-border-color: var(--color-border);
+  --g-text-muted: var(--color-text-muted);
+  --g-text-light: var(--color-bg);
+  --g-text-dark: var(--color-text);
+  --g-progress-color: var(--color-bg-inset);
+  --g-handle-color: var(--color-text);
+  --g-weekend-label-color: var(--color-bg-inset);
+  --g-expected-progress: var(--color-bg-inset);
+  --g-header-background: var(--color-bg);
+  --g-row-color: var(--color-bg);
+  --g-row-border-color: var(--color-border);
+  --g-today-highlight: var(--color-accent);
+  --g-popup-actions: var(--color-bg-inset);
+  --g-weekend-highlight-color: var(--color-bg-alt);
+
+  border: var(--border-hair);
+  border-radius: var(--radius-0);
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+}
+
+/* Header: mono label style */
+.gantt-view .gantt-container .grid-header { border-bottom: var(--border-hair); }
+.gantt-view .gantt-container .side-header { display: none; }
+.gantt-view .gantt-container .upper-text,
+.gantt-view .gantt-container .lower-text {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.gantt-view .gantt-container .upper-text { color: var(--color-text); }
+.gantt-view .gantt-container .lower-text { color: var(--color-text-muted); }
+.gantt-view .gantt-container .current-date-highlight {
+  border-radius: var(--radius-0);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+.gantt-view .gantt-container .date-range-highlight {
+  border-radius: var(--radius-0);
+  background: var(--color-bg-inset);
+}
+
+/* Today marker: 2px accent rule, no dot */
+.gantt-view .gantt-container .current-highlight {
+  width: 2px;
+  margin-left: -1px;
+  background: var(--color-accent);
+}
+.gantt-view .gantt-container .current-ball-highlight { display: none; }
+
+/* Scroll-back button */
+.gantt-view .gantt-container .extras .adjust {
+  border-radius: var(--radius-0);
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-family: var(--font-mono);
+}
+
+/* Grid: hairlines */
+.gantt-view .gantt .grid-row { fill: var(--color-bg); }
+.gantt-view .gantt .row-line,
+.gantt-view .gantt .tick,
+.gantt-view .gantt .tick.thick {
+  stroke: var(--color-border);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+/* Bars: square ink, no progress, no outline/shadow */
+.gantt-view .gantt .bar-wrapper .bar {
+  fill: var(--color-text);
+  stroke: none;
+  rx: 0;
+  ry: 0;
+  outline: none;
+  border-radius: var(--radius-0);
+}
+.gantt-view .gantt .bar-progress,
+.gantt-view .gantt .bar-expected-progress,
+.gantt-view .gantt .handle { display: none; }
+
+/* Status strip (4px, drawn by GanttView after each render) */
+.gantt-view .gantt .bar-strip { fill: var(--color-text); }
+.gantt-view .gantt .bar--green .bar-strip { fill: var(--status-ok); }
+.gantt-view .gantt .bar--amber .bar-strip { fill: var(--status-warn); }
+.gantt-view .gantt .bar--red .bar-strip { fill: var(--status-error); }
+
+/* Selected bar: 2px accent outline */
+.gantt-view .gantt .bar-wrapper.bar--selected .bar {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Labels: sans 500 14px on ink; outside the bar when it doesn't fit */
+.gantt-view .gantt .bar-label,
+.gantt-view .gantt .bar-label.big {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium);
+  font-size: 14px;
+}
+.gantt-view .gantt .bar-label { fill: var(--color-bg); }
+.gantt-view .gantt .bar-label.big { fill: var(--color-text); }
+.gantt-view .gantt .bar-wrapper.bar--selected .bar-label.big { fill: var(--color-accent); }
+
+/* ── Accessible campaign list ────────────────────────────── */
+.gantt-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--border-hair);
+}
+.gantt-list > li { border-bottom: var(--border-hair); }
+.gantt-list__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-left: 2px solid transparent;
+  background: transparent;
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-standard);
+}
+.gantt-list__item:hover { background: var(--color-bg-alt); }
+.gantt-list__item[aria-current='true'] {
+  border-left-color: var(--color-accent);
+  background: var(--color-bg-alt);
+}
+.gantt-list__name {
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-body-s);
+  overflow-wrap: anywhere;
+}
+.gantt-list__dates {
+  font-size: var(--font-size-label);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .gantt-list__item { grid-template-columns: minmax(0, 1fr) auto; }
+  .gantt-list__dates { grid-column: 1; grid-row: 2; }
+  .gantt-list__item .pill { grid-column: 2; grid-row: 1 / span 2; }
+}

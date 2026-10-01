@@ -1,0 +1,43 @@
+/* Watcher health panel (styles.md → Dashboard mappings → Watcher health). Tokens only. */
+
+.health { display: grid; gap: var(--space-4); min-width: 0; }
+.health > .track { margin-bottom: 0; }
+.health__poll { font-size: var(--font-size-button-s); white-space: nowrap; }
+.health__summary { margin: 0; }
+
+.health__folders {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.health__folder {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) 0;
+  border-bottom: var(--border-hair);
+  min-width: 0;
+}
+.health__folder:first-child { padding-top: 0; }
+
+.health__row { margin-bottom: 0; min-width: 0; }
+.health__row .track__rule { min-width: var(--space-4); }
+.health__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.health__value { flex: none; white-space: nowrap; }
+.health__value.status-error { color: var(--status-error-fg); }
+
+.health__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  font-size: var(--font-size-label);
+}
+.health__path { overflow-wrap: anywhere; min-width: 0; }
+.health__count { color: var(--color-text-muted); letter-spacing: var(--tracking-label); }
+.health__error { margin: 0; overflow-wrap: anywhere; }

@@ -117,7 +117,8 @@ Destructive actions use the secondary style with text and border in `--status-er
         border-radius: var(--radius-pill); font-family: var(--font-mono); font-size: var(--font-size-pill);
         letter-spacing: var(--tracking-pill); text-transform: uppercase; }
 .pill--solid   { background: var(--pill-color); color: var(--paper-0); }
-.pill--outline { border: 1px solid var(--pill-color); color: var(--pill-color); }
+.pill--outline { border: 1px solid var(--pill-fg); color: var(--pill-fg); }
+/* --pill-fg is the matching --status-*-fg token: same colour in light, lightened in dark for contrast. */
 /* --pill-color ∈ --status-ok | --status-info | --status-warn | --status-error */
 ```
 
@@ -199,7 +200,7 @@ Add a mono caption in the bottom-left that describes the required shot. This str
 - **USER** is sans body-s. When the user came from `jcr:lastModifiedBy`, append a muted mono `JCR` suffix (audit-sourced users have no suffix).
 - **WHEN** is mono tabular in local time. The exact UTC value goes in a `title` attribute.
 - **Filters** are a row of `<select>` inputs for user and file type, labelled with mono labels. Use the segmented control only when there are 4 or fewer options.
-- **"Mark reviewed"** is the detail view's one primary button.
+- **"Mark reviewed"** is a secondary button: "New campaign" in the nav is the page's one oxide primary. It is disabled when there is nothing to review.
 
 ### Watcher health
 Show one track-rule row per folder:

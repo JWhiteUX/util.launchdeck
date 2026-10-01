@@ -1,0 +1,75 @@
+/* Campaign detail + activity feed (design/styles.md, dashboard mappings). Tokens only. */
+
+.detail { display: grid; gap: var(--space-6); min-width: 0; }
+.detail__header { display: grid; gap: var(--space-5); }
+.detail__header > p { margin: 0; }
+
+.detail__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+}
+.detail__name {
+  margin: 0;
+  font-size: var(--font-size-h3);
+  line-height: var(--line-height-h3);
+  letter-spacing: var(--tracking-h3);
+  font-weight: var(--font-weight-semibold);
+  font-stretch: var(--font-stretch-display);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 720px) {
+  .detail__name { font-size: var(--font-size-h4); line-height: var(--line-height-h4); }
+}
+
+.detail__specs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-4) var(--space-5);
+  margin: 0;
+}
+.detail__spec { display: grid; gap: var(--space-1); align-content: start; min-width: 0; }
+.detail__spec--wide { grid-column: 1 / -1; }
+.detail__spec dd { margin: 0; font-size: var(--font-size-body-s); }
+.detail__spec dd.mono { font-size: var(--font-size-spec); }
+.detail__folders { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-1); }
+.detail__folders > li { font-size: var(--font-size-spec); overflow-wrap: anywhere; }
+
+.detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+}
+.detail__close { margin-left: auto; min-height: var(--control-h-s); }
+
+/* ── Activity feed ─────────────────────────────────────── */
+.feed { display: grid; gap: var(--space-4); min-width: 0; }
+.feed > p { margin: 0; }
+
+.feed__filters { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.feed__filter { flex: 1 1 160px; max-width: 280px; }
+.feed__filter .select { width: 100%; height: var(--control-h-s); font-size: var(--font-size-body-s); }
+.feed__filter .select.mono { font-size: var(--font-size-spec); }
+
+.feed__table td { white-space: nowrap; }
+.feed__table .feed__asset { white-space: normal; min-width: 180px; }
+.feed__asset-name {
+  display: block;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-body-s);
+  overflow-wrap: anywhere;
+}
+.feed__asset-path {
+  display: block;
+  font-size: var(--font-size-label);
+  overflow-wrap: anywhere;
+}
+.feed__format,
+.feed__when { font-size: var(--font-size-spec); }
+.feed__jcr { font-size: var(--font-size-label); letter-spacing: var(--tracking-label); }
+
+.feed__row--unreviewed > td { background: var(--color-accent-tint); }
+.feed__row > td:first-child { border-left: 2px solid transparent; }
+.feed__row--unreviewed > td:first-child { border-left-color: var(--color-accent); }

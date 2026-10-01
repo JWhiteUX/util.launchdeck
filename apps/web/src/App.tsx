@@ -1,44 +1,20 @@
-import { useEffect, useState } from 'react';
-import type { Campaign } from '@launchdeck/shared';
-import { listCampaigns } from './api.ts';
+import { useState } from 'react';
+import { api } from './api.ts';
+import { CampaignDetail } from './components/CampaignDetail.tsx';
+import { CampaignModal } from './components/CampaignModal.tsx';
+import type { ModalState } from './components/CampaignModal.tsx';
+import { GanttView } from './components/GanttView.tsx';
+import { WatcherHealth } from './components/WatcherHealth.tsx';
 import { formatCount } from './format.ts';
-
-type CampaignsState =
-  | { status: 'loading' }
-  | { status: 'error'; message: string }
-  | { status: 'ready'; campaigns: Campaign[] };
-
-function useCampaigns(): CampaignsState {
-  const [state, setState] = useState<CampaignsState>({ status: 'loading' });
-
-  useEffect(() => {
-    const controller = new AbortController();
-    listCampaigns(controller.signal).then(
-      (campaigns) => setState({ status: 'ready', campaigns }),
-      (err: unknown) => {
-        if (controller.signal.aborted) return;
-        setState({ status: 'error', message: err instanceof Error ? err.message : String(err) });
-      },
-    );
-    return () => controller.abort();
-  }, []);
-
-  return state;
-}
-
-function trackValue(state: CampaignsState): string {
-  switch (state.status) {
-    case 'loading':
-      return 'LOADING';
-    case 'error':
-      return 'ERROR';
-    case 'ready':
-      return formatCount(state.campaigns.length, 'campaign');
-  }
-}
+import { useDashboard } from './store.ts';
 
 export function App() {
-  const campaigns = useCampaigns();
+  const dash = useDashboard();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [modal, setModal] = useState<ModalState | null>(null);
+  const selected = dash.campaigns.find((c) => c.id === selectedId) ?? null;
+
+  const timelineValue = dash.loading ? 'LOADING' : dash.error ? 'ERROR' : formatCount(dash.campaigns.length, 'campaign');
 
   return (
     <>
@@ -49,33 +25,82 @@ export function App() {
             <span className="wordmark__name">Launchdeck</span>
           </a>
           <div className="nav__actions">
-            <button type="button" className="btn btn--primary btn--s">
+            <button type="button" className="btn btn--primary btn--s" onClick={() => setModal({ mode: 'create' })}>
               New campaign
             </button>
           </div>
         </div>
       </header>
 
-      <main className="page">
-        <section aria-labelledby="timeline-label">
+      <main className="page dashboard">
+        <section className="dashboard__timeline" aria-labelledby="timeline-label">
           <div className="track">
             <span className="label" id="timeline-label">
               01 / TIMELINE
             </span>
             <span className="track__rule" />
-            <span className="track__value" aria-live="polite">
-              {trackValue(campaigns)}
-            </span>
+            <span className="track__value">{timelineValue}</span>
           </div>
-          {campaigns.status === 'error' ? (
-            <p className="body-s status-error">
-              Can't load campaigns: {campaigns.message} Check that the server is running on port 4000, then reload.
+          {dash.error ? (
+            <p className="body-s status-error" role="alert">
+              Can't load campaigns: {dash.error} Check that the server is running on port 4000, then reload.
             </p>
+          ) : !dash.loading && dash.campaigns.length === 0 ? (
+            <div className="empty">
+              <p className="body-s muted">No campaigns yet. Add one to start watching its DAM folders.</p>
+              <button type="button" className="btn btn--secondary btn--s" onClick={() => setModal({ mode: 'create' })}>
+                Add campaign
+              </button>
+            </div>
           ) : (
-            <p className="body-s muted">Timeline arrives in Phase 4.</p>
+            <GanttView campaigns={dash.campaigns} selectedId={selectedId} onSelect={setSelectedId} />
           )}
         </section>
+
+        <div className="dashboard__lower">
+          <section className="dashboard__detail" aria-labelledby="detail-label">
+            <div className="track">
+              <span className="label" id="detail-label">
+                02 / ACTIVITY
+              </span>
+              <span className="track__rule" />
+              <span className="track__value">{selected ? selected.name.toUpperCase() : 'NONE SELECTED'}</span>
+            </div>
+            {selected ? (
+              <CampaignDetail
+                campaign={selected}
+                changeTick={dash.changeTicks[selected.id] ?? 0}
+                onEdit={() => setModal({ mode: 'edit', campaign: selected })}
+                onReviewed={dash.upsert}
+                onClose={() => setSelectedId(null)}
+              />
+            ) : (
+              <p className="body-s muted">Select a campaign on the timeline to see its asset changes.</p>
+            )}
+          </section>
+
+          <section className="dashboard__watcher" aria-labelledby="watcher-label">
+            <WatcherHealth health={dash.health} stream={dash.stream} onPollNow={() => void api.pollNow()} />
+          </section>
+        </div>
       </main>
+
+      {modal && (
+        <CampaignModal
+          state={modal}
+          onClose={() => setModal(null)}
+          onSaved={(campaign) => {
+            dash.upsert(campaign);
+            setSelectedId(campaign.id);
+            setModal(null);
+          }}
+          onDeleted={(id) => {
+            dash.remove(id);
+            if (selectedId === id) setSelectedId(null);
+            setModal(null);
+          }}
+        />
+      )}
     </>
   );
 }

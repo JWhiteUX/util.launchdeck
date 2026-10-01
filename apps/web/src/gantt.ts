@@ -1,0 +1,57 @@
+import type { Badge, CampaignView } from '@launchdeck/shared';
+import type { GanttTask, GanttViewModeName } from 'frappe-gantt';
+
+export const VIEW_MODES = ['Day', 'Week', 'Month'] as const satisfies readonly GanttViewModeName[];
+export type ViewMode = (typeof VIEW_MODES)[number];
+
+export const SELECTED_CLASS = 'bar--selected';
+
+/** frappe-gantt adds custom_class with classList.add, so it must be a single token. */
+export const barClass = (badge: Badge) => `bar--${badge}`;
+
+/**
+ * Campaign → read-only task. Dates are inclusive calendar days (frappe treats a
+ * date-only end as end of day). Selection is a class toggled after render, so
+ * selecting a bar never re-renders the chart or resets its scroll.
+ */
+export function toGanttTasks(campaigns: readonly CampaignView[]): GanttTask[] {
+  return campaigns.map((c) => ({
+    id: c.id,
+    name: c.name,
+    start: c.startDate,
+    end: c.launchDate,
+    progress: 0,
+    custom_class: barClass(c.badge),
+  }));
+}
+
+/** Stable signature so identical refetches don't re-render the chart. */
+export const tasksKey = (tasks: readonly GanttTask[]) =>
+  tasks.map((t) => [t.id, t.name, t.start, t.end, t.custom_class].join('|')).join('\n');
+
+/** frappe rewrites spaces in ids to underscores; match its data-id. */
+export const ganttId = (id: string) => id.replaceAll(' ', '_');
+
+const DAY_MS = 86_400_000;
+const BASE_PADDING_DAYS: Record<ViewMode, number> = { Day: 7, Week: 28, Month: 62 };
+const dayNumber = (ymd: string) => {
+  const [y = 0, m = 1, d = 1] = ymd.split('-').map(Number);
+  return Date.UTC(y, m - 1, d) / DAY_MS;
+};
+
+/**
+ * [before, after] padding for a view mode, widened so today always falls inside
+ * the chart (the today marker is only drawn when today is in range).
+ */
+export function rangePadding(
+  campaigns: readonly Pick<CampaignView, 'startDate' | 'launchDate'>[],
+  mode: ViewMode,
+  today: string,
+): [string, string] {
+  const base = BASE_PADDING_DAYS[mode];
+  if (campaigns.length === 0) return [`${base}d`, `${base}d`];
+  const t = dayNumber(today);
+  const first = Math.min(...campaigns.map((c) => dayNumber(c.startDate)));
+  const last = Math.max(...campaigns.map((c) => dayNumber(c.launchDate)));
+  return [`${base + Math.max(0, first - t)}d`, `${base + Math.max(0, t - last)}d`];
+}

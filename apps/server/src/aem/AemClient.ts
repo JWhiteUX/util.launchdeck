@@ -5,22 +5,9 @@
  * (e.g. /content/dam/brand/fall-launch/hero.jpg) with no trailing slash.
  */
 
-export interface FolderEntry {
-  path: string;
-  name: string;
-  title: string | null;
-}
+import type { AssetEntry, FolderEntry, FolderListing } from '@launchdeck/shared';
 
-export interface AssetEntry {
-  path: string;
-  name: string;
-}
-
-export interface FolderListing {
-  path: string;
-  folders: FolderEntry[];
-  assets: AssetEntry[];
-}
+export type { AssetEntry, FolderEntry, FolderListing };
 
 /** One dam:Asset hit from QueryBuilder (p.hits=selective). */
 export interface AssetHit {

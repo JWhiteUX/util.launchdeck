@@ -47,3 +47,27 @@ export type StreamMessage =
   | { type: 'health'; health: WatcherHealth }
   | { type: 'campaign'; action: 'created' | 'updated' | 'reviewed'; campaign: CampaignView }
   | { type: 'campaign'; action: 'deleted'; id: string };
+
+/** GET /api/folders?path= (Assets HTTP API listing: immediate children). */
+export interface FolderEntry {
+  path: string;
+  name: string;
+  title: string | null;
+}
+
+export interface AssetEntry {
+  path: string;
+  name: string;
+}
+
+export interface FolderListing {
+  path: string;
+  folders: FolderEntry[];
+  assets: AssetEntry[];
+}
+
+/** GET /api/campaigns/:id/events/facets — distinct values for feed filters. */
+export interface EventFacets {
+  users: string[];
+  formats: string[];
+}

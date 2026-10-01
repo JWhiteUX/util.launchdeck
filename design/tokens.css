@@ -31,6 +31,12 @@
   --status-warn: #9A6200;
   --status-error: #A3261B;
 
+  /* Status as text or outline on the current surface (lighter in dark theme for contrast) */
+  --status-ok-fg: var(--status-ok);
+  --status-info-fg: var(--status-info);
+  --status-warn-fg: var(--status-warn);
+  --status-error-fg: var(--status-error);
+
   /* Placeholder stripe (reference page imagery placeholders) */
   --placeholder-stripe: #E5E3DC;
 
@@ -179,7 +185,11 @@
     --color-accent: var(--oxide-300);
     --color-accent-hover: var(--oxide-100);
     --color-accent-active: var(--oxide-100);
-    --color-accent-tint: var(--oxide-700);
+    --color-accent-tint: color-mix(in srgb, var(--oxide-700) 35%, var(--ink-900));
+    --status-ok-fg: color-mix(in srgb, var(--status-ok) 45%, var(--paper-0));
+    --status-info-fg: color-mix(in srgb, var(--status-info) 45%, var(--paper-0));
+    --status-warn-fg: color-mix(in srgb, var(--status-warn) 45%, var(--paper-0));
+    --status-error-fg: color-mix(in srgb, var(--status-error) 45%, var(--paper-0));
     --color-focus: var(--oxide-300);
     --color-on-accent: var(--ink-900);
     --placeholder-stripe: var(--ink-800);
@@ -202,7 +212,11 @@
   --color-accent: var(--oxide-300);
   --color-accent-hover: var(--oxide-100);
   --color-accent-active: var(--oxide-100);
-  --color-accent-tint: var(--oxide-700);
+  --color-accent-tint: color-mix(in srgb, var(--oxide-700) 35%, var(--ink-900));
+  --status-ok-fg: color-mix(in srgb, var(--status-ok) 45%, var(--paper-0));
+  --status-info-fg: color-mix(in srgb, var(--status-info) 45%, var(--paper-0));
+  --status-warn-fg: color-mix(in srgb, var(--status-warn) 45%, var(--paper-0));
+  --status-error-fg: color-mix(in srgb, var(--status-error) 45%, var(--paper-0));
   --color-focus: var(--oxide-300);
   --color-on-accent: var(--ink-900);
   --placeholder-stripe: var(--ink-800);
