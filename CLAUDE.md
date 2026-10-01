@@ -6,7 +6,7 @@ The plan of record is in `~/.claude/plans/pasted-content-id-d3b2-task-polished-o
 
 ## Stack (fixed — do not substitute)
 - The repo is a TypeScript monorepo using npm workspaces:
-  - `apps/web`: Vite + React, port 3000
+  - `apps/web`: Vite + React, port 3001 (moved from 3000, which a local Docker container uses; override with `WEB_PORT`)
   - `apps/server`: Fastify, port 4000
   - `packages/shared`: types + zod schemas
 - SQLite via better-sqlite3 stores campaigns, folder snapshots and change events, with versioned migrations.

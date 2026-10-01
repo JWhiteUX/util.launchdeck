@@ -11,10 +11,10 @@ export default defineConfig({
     alias: { '@design': designDir },
   },
   server: {
-    port: 3000,
+    port: Number(process.env.WEB_PORT ?? 3001),
     strictPort: true,
     fs: { allow: [repoRoot] },
-    // SSE (/api/events) streams through http-proxy unbuffered by default.
+    // SSE (/api/stream) streams through http-proxy unbuffered by default.
     proxy: {
       '/api': { target: 'http://127.0.0.1:4000', changeOrigin: true },
     },

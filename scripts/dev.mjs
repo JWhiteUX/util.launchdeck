@@ -1,5 +1,9 @@
 // Runs the server and web dev processes in parallel; Ctrl+C stops both.
 import { spawn } from 'node:child_process';
+import { existsSync } from 'node:fs';
+
+// Share .env (e.g. WEB_PORT, PORT) with both child processes.
+if (existsSync('.env')) process.loadEnvFile('.env');
 
 const procs = [
   ['server', ['run', 'dev', '-w', '@launchdeck/server']],
