@@ -1,0 +1,8 @@
+{
+  "defaultUser": "dev.patel",
+  "assets": {
+    "hero.jpg": { "lastModifiedBy": "maria.chen" },
+    "banner.png": { "lastModifiedBy": "dev.patel" },
+    "specs.pdf": { "lastModifiedBy": "maria.chen" }
+  }
+}
