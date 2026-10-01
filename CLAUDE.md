@@ -39,6 +39,7 @@ The UI uses the **Ferrite** design system, exported from Claude Design.
 | `design/tokens.css` | Canonical tokens. `apps/web` imports this file through the `@design` Vite alias, so there is only one copy. |
 | `design/styles.md` | Component recipes, plus **dashboard mappings** for the badges, Gantt, activity feed, watcher health and modal |
 | `design/design_guidelines.md` | Voice, colour ratios, type, motion, accessibility, do/don't |
+| `design/palette-revision.md` | "Clear Oxide" colour revision (2026-10-01): supersedes Brand Report §2, with an old → new hex table and contrast notes |
 | `design/source/` | Verbatim Claude Design export (brand report, reference `.dc.html` and its runtime). **Read-only provenance; do not edit.** |
 
 Rules when writing UI:

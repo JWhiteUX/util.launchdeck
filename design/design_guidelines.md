@@ -1,6 +1,6 @@
 # Ferrite design guidelines
 
-Derived from `design/source/Ferrite Brand Report.md` (§1, §2.4, §3.3, §7–§11). Tokens are in `design/tokens.css` and component recipes in `design/styles.md`.
+Derived from `design/source/Ferrite Brand Report.md` (§1, §2.4, §3.3, §7–§11). Tokens are in `design/tokens.css` and component recipes in `design/styles.md`. Colour values follow the "Clear Oxide" revision in `design/palette-revision.md`, which supersedes the report's §2.
 
 Ferrite Systems is a fictional storage brand, and launchdeck borrows its visual system. Its positioning ("storage you can plan around: measured, specified, predictable") fits a launch-readiness tool, so the voice carries over unchanged.
 
@@ -21,7 +21,7 @@ Engineered, candid, calm, exact. Not flashy, not playful.
 - **Status colours** are functional only: health, change type, validation. Never decorative.
 - **No gradients anywhere.** Fills are flat. The only exception is the striped image placeholder.
 - **On dark ink surfaces,** use `--oxide-300` for accent text, never `--oxide-500`.
-- **Dark theme:** `tokens.css` remaps the semantic tokens for `prefers-color-scheme: dark` and `[data-theme="dark"]`. The report only specified this mapping in outline (§11.5); the values follow the report's dark-band rules.
+- **Dark theme:** `tokens.css` remaps the semantic tokens for `prefers-color-scheme: dark` and `[data-theme="dark"]`. The app follows the system appearance by default. Dark surfaces use dedicated tokens (`--ink-600` hairlines, `--oxide-900` tint, `--status-*-300` text), never `color-mix()`.
 
 ## Typography
 - **Archivo** is used for display and headings at weight 700 with semi-condensed stretch (87.5%). It is also used for body and UI at 400, 500 and 600 with normal stretch.
@@ -67,7 +67,8 @@ There is no final logo yet. The interim wordmark is a solid 14×14 oxide square 
 - **Reduced motion:** honour `prefers-reduced-motion: reduce`. The tokens collapse durations to 0ms, so tweens must be disabled too.
 
 ## Accessibility
-- Body text contrast is at least 4.5:1, and every listed palette pair passes. `#B8471F` on `#FBFAF7` is about 5.1:1, and `#E08A63` on `#14161A` is about 7.0:1.
+- Body text contrast is at least 4.5:1, and every text pair in use passes. `#C8411B` on `#FCFCFB` is 4.84:1, and `#FF8A5C` on `#121417` is 7.94:1. See `design/palette-revision.md` for the full table.
+- **Never put `--color-accent` text on `--color-accent-tint`.** It is 4.30:1. Use ink text on tinted rows and `--oxide-700` for highlighted headers.
 - **Never rely on colour alone,** including oxide or status colours. Pair colour with a text label, a fill change, weight or an icon. Status badges always carry a word (`READY`, `3 CHANGES`, `ERROR`).
 - Touch hit targets are at least 44px.
 - The focus ring is always visible on `:focus-visible`: 2px in the focus colour with a 2px offset.

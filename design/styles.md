@@ -1,6 +1,6 @@
 # Ferrite styles — component recipes
 
-Derived from `design/source/Ferrite Brand Report.md` §5–§6 and the reference page `design/source/Ferrite Home.dc.html`. All values reference tokens in `design/tokens.css`. Rules and rationale live in `design/design_guidelines.md`.
+Derived from `design/source/Ferrite Brand Report.md` §5–§6 and the reference page `design/source/Ferrite Home.dc.html`. All values reference tokens in `design/tokens.css`. Rules and rationale live in `design/design_guidelines.md`. Colour values follow the "Clear Oxide" revision (2026-10-01) in `design/palette-revision.md`, which supersedes Brand Report §2.
 
 The **Dashboard mappings** section at the end shows how launchdeck's UI uses these recipes.
 
@@ -149,7 +149,7 @@ A dark band uses `--ink-900` fill and `--paper-0` text. Muted text is `--ink-300
 
 - Floating surfaces use `background: var(--color-bg); border: var(--border-hair); box-shadow: var(--shadow-float); border-radius: var(--radius-0);`.
 - This is the **only** place a shadow is allowed.
-- A modal backdrop is `rgba(20,22,26,0.4)`, a flat colour with no blur.
+- A modal backdrop is `--ink-900` at 40% opacity, a flat colour with no blur.
 - Opening uses an opacity and 8px translate over `var(--dur-slow)`.
 
 ## Image placeholder
@@ -180,7 +180,7 @@ Add a mono caption in the bottom-left that describes the required shot. This str
 
 ### Gantt (frappe-gantt overrides in `apps/web/src/styles/gantt.css`)
 - **Bars** have square corners (`rx/ry = 0`) and no progress fill. Each campaign gets a categorical colour, `--series-1` to `--series-8`, assigned in creation order so it never changes when others are added. Past eight campaigns, bars fall back to ink; colours are never cycled. Bar labels are sans 500 at 14px in `--color-on-series`.
-- **Series colours** were validated with the dataviz palette checker (colour-blind and normal-vision separation, contrast) on paper-0 and ink-900, with separate dark-mode steps. They are identity only: never status, never oxide.
+- **Series colours** come from the "Clear Oxide" revision, with separate dark-mode steps. Checker results are in `design/palette-revision.md`. They are identity only: never status, never oxide.
 - **Status** is not drawn on the bars. The list under the chart pairs each campaign's colour swatch and name with its status badge, which always carries text.
 - **Height** toggle (`DEFAULT`, `2×`, `3×`) sits beside the scale control. Default fits the campaigns; 2× and 3× reserve at least 8 and 12 rows. The choice is remembered per browser.
 - **Grid** lines are hairlines in `--color-border`. Header text uses the mono label style. The weekend or today column uses `--color-bg-alt`.

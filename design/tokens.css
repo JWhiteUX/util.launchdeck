@@ -1,60 +1,68 @@
 /*
- * Ferrite design tokens — derived from design/source/Ferrite Brand Report.md.
- * Hex values are the source of truth. Do not hand-edit values here without
- * updating the report; UI code must reference these tokens, never raw hex.
+ * Ferrite design tokens: "Clear Oxide" palette revision (2026-10-01).
+ * The colour values supersede design/source/Ferrite Brand Report.md §2 (see design/palette-revision.md).
+ * Token names are unchanged. Additions are marked NEW.
+ * Hex values are the source of truth. UI code must reference tokens, never raw hex.
  */
 
 :root {
   /* ── 1. Primitive colours ─────────────────────────────── */
 
-  /* Neutrals: graphite & paper (§2.1) */
-  --ink-900: #14161A;
-  --ink-800: #1E2126;
-  --ink-700: #2A2E35;
-  --ink-500: #5B616B;
-  --ink-300: #A3A8B0;
-  --line: #D9D8D2;
-  --paper-200: #ECEAE4;
-  --paper-100: #F4F3EF;
-  --paper-0: #FBFAF7;
+  /* Neutrals: true grey, so the paper and ink tones don't clash */
+  --ink-900: #121417;
+  --ink-800: #1A1D21;
+  --ink-700: #24282E;
+  --ink-600: #2C3138; /* NEW: dark-theme hairline */
+  --ink-500: #5C626C;
+  --ink-300: #A0A6B0;
+  --line: #E0E0DD;
+  --paper-200: #EEEEEC;
+  --paper-100: #F6F6F5;
+  --paper-0: #FCFCFB;
 
-  /* Brand accent: Oxide (§2.2) */
-  --oxide-700: #7A2E13;
-  --oxide-600: #963817;
-  --oxide-500: #B8471F;
-  --oxide-300: #E08A63;
-  --oxide-100: #F6E3D9;
+  /* Brand accent: Oxide, shifted toward vermilion */
+  --oxide-900: #3D1F14; /* NEW: dark-theme tint, replaces the color-mix */
+  --oxide-700: #8A2C0D;
+  --oxide-600: #A8340F;
+  --oxide-500: #C8411B;
+  --oxide-300: #FF8A5C;
+  --oxide-100: #FDEBE3;
 
-  /* Status — functional only, never decorative (§2.3) */
-  --status-ok: #2E6B4F;
-  --status-info: #2B5C8A;
-  --status-warn: #9A6200;
-  --status-error: #A3261B;
+  /* Status: functional only, never decorative */
+  --status-ok: #1E7A4C;
+  --status-info: #2160B5;
+  --status-warn: #A65A00;
+  --status-error: #C02A1E;
 
-  /* Status as text or outline on the current surface (lighter in dark theme for contrast) */
+  /* NEW: status as text or outline on dark surfaces (replaces the 45% paper mixes) */
+  --status-ok-300: #5CC98D;
+  --status-info-300: #7AAEF5;
+  --status-warn-300: #F0A848;
+  --status-error-300: #F2867A;
+
+  /* Status as text or outline on the current surface */
   --status-ok-fg: var(--status-ok);
   --status-info-fg: var(--status-info);
   --status-warn-fg: var(--status-warn);
   --status-error-fg: var(--status-error);
 
   /* Placeholder stripe (reference page imagery placeholders) */
-  --placeholder-stripe: #E5E3DC;
+  --placeholder-stripe: #E6E6E3;
 
-  /* Campaign identity (categorical, fixed order; validated with the dataviz palette checker:
-     CVD and normal-vision separation on paper-0 and ink-900). Never status, never oxide. */
-  --series-1: #2C5F9E;
-  --series-2: #3F7A2E;
-  --series-3: #00799A;
-  --series-4: #8C6A00;
-  --series-5: #7A3E8E;
+  /* Campaign identity (categorical, fixed order). Never status, never oxide. */
+  --series-1: #2D6BCF;
+  --series-2: #2A7E3B;
+  --series-3: #007FA0;
+  --series-4: #946A00;
+  --series-5: #8A45AB;
   --series-6: #00806A;
-  --series-7: #5249A6;
-  --series-8: #B03A6C;
+  --series-7: #5A4FCF;
+  --series-8: #C2386F;
   --color-on-series: var(--paper-0);
 
   color-scheme: light;
 
-  /* ── 2. Semantic colours (§2.5) ───────────────────────── */
+  /* ── 2. Semantic colours ──────────────────────────────── */
   --color-bg: var(--paper-0);
   --color-bg-alt: var(--paper-100);
   --color-bg-inset: var(--paper-200);
@@ -165,8 +173,8 @@
   --border-hair: 1px solid var(--color-border);
   --border-strong: 1px solid var(--color-border-strong);
 
-  /* One elevation level only — floating UI (menus, popovers, modals). Cards have none. */
-  --shadow-float: 0 8px 24px -8px rgba(20, 22, 26, 0.18);
+  /* One elevation level only: floating UI (menus, popovers, modals). Cards have none. */
+  --shadow-float: 0 8px 24px -8px rgba(18, 20, 23, 0.18);
 
   --control-h: 48px;
   --control-h-s: 36px;
@@ -181,7 +189,7 @@
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* ── Dark theme: remap semantic tokens to ink surfaces (§11.5) ── */
+/* ── Dark theme: remap semantic tokens to ink surfaces ── */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --color-bg: var(--ink-900);
@@ -193,28 +201,28 @@
     --color-text-muted: var(--ink-300);
     --color-text-inverse: var(--ink-900);
     --color-text-inverse-muted: var(--ink-500);
-    --color-border: var(--ink-700);
+    --color-border: var(--ink-600);
     --color-border-strong: var(--paper-0);
     --color-border-inverse: var(--line);
     --color-accent: var(--oxide-300);
     --color-accent-hover: var(--oxide-100);
     --color-accent-active: var(--oxide-100);
-    --color-accent-tint: color-mix(in srgb, var(--oxide-700) 35%, var(--ink-900));
-    --status-ok-fg: color-mix(in srgb, var(--status-ok) 45%, var(--paper-0));
-    --status-info-fg: color-mix(in srgb, var(--status-info) 45%, var(--paper-0));
-    --status-warn-fg: color-mix(in srgb, var(--status-warn) 45%, var(--paper-0));
-    --status-error-fg: color-mix(in srgb, var(--status-error) 45%, var(--paper-0));
+    --color-accent-tint: var(--oxide-900);
+    --status-ok-fg: var(--status-ok-300);
+    --status-info-fg: var(--status-info-300);
+    --status-warn-fg: var(--status-warn-300);
+    --status-error-fg: var(--status-error-300);
     --color-focus: var(--oxide-300);
     --color-on-accent: var(--ink-900);
     --placeholder-stripe: var(--ink-800);
-    --series-1: #528ED9;
-    --series-2: #609F4F;
-    --series-3: #0A9AC3;
-    --series-4: #AF8504;
-    --series-5: #AD6FC3;
-    --series-6: #04A388;
-    --series-7: #827EE0;
-    --series-8: #D55C8C;
+    --series-1: #5B9BF0;
+    --series-2: #5DB86A;
+    --series-3: #22B3D6;
+    --series-4: #D9A62A;
+    --series-5: #B780D6;
+    --series-6: #2EC0A2;
+    --series-7: #8E87F2;
+    --series-8: #EE6E9F;
     --color-on-series: var(--ink-900);
     color-scheme: dark;
   }
@@ -230,28 +238,28 @@
   --color-text-muted: var(--ink-300);
   --color-text-inverse: var(--ink-900);
   --color-text-inverse-muted: var(--ink-500);
-  --color-border: var(--ink-700);
+  --color-border: var(--ink-600);
   --color-border-strong: var(--paper-0);
   --color-border-inverse: var(--line);
   --color-accent: var(--oxide-300);
   --color-accent-hover: var(--oxide-100);
   --color-accent-active: var(--oxide-100);
-  --color-accent-tint: color-mix(in srgb, var(--oxide-700) 35%, var(--ink-900));
-  --status-ok-fg: color-mix(in srgb, var(--status-ok) 45%, var(--paper-0));
-  --status-info-fg: color-mix(in srgb, var(--status-info) 45%, var(--paper-0));
-  --status-warn-fg: color-mix(in srgb, var(--status-warn) 45%, var(--paper-0));
-  --status-error-fg: color-mix(in srgb, var(--status-error) 45%, var(--paper-0));
+  --color-accent-tint: var(--oxide-900);
+  --status-ok-fg: var(--status-ok-300);
+  --status-info-fg: var(--status-info-300);
+  --status-warn-fg: var(--status-warn-300);
+  --status-error-fg: var(--status-error-300);
   --color-focus: var(--oxide-300);
   --color-on-accent: var(--ink-900);
   --placeholder-stripe: var(--ink-800);
-  --series-1: #528ED9;
-  --series-2: #609F4F;
-  --series-3: #0A9AC3;
-  --series-4: #AF8504;
-  --series-5: #AD6FC3;
-  --series-6: #04A388;
-  --series-7: #827EE0;
-  --series-8: #D55C8C;
+  --series-1: #5B9BF0;
+  --series-2: #5DB86A;
+  --series-3: #22B3D6;
+  --series-4: #D9A62A;
+  --series-5: #B780D6;
+  --series-6: #2EC0A2;
+  --series-7: #8E87F2;
+  --series-8: #EE6E9F;
   --color-on-series: var(--ink-900);
   color-scheme: dark;
 }

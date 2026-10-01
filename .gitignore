@@ -5,3 +5,5 @@ node_modules/
 !.env.example
 data/
 .playwright-mcp/
+# Design handoff archives (unpacked into design/ when applied)
+*.zip
