@@ -1,0 +1,128 @@
+/* Ferrite base + nav + wordmark recipes (design/styles.md). Tokens only. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--color-accent); text-decoration: none; }
+a:hover { color: var(--color-accent-hover); text-decoration: underline; }
+button, input, select, textarea { font-family: inherit; }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+h1, h2, h3, h4 { text-wrap: balance; }
+p { text-wrap: pretty; max-width: var(--measure-body); }
+
+/* ── Type roles ─────────────────────────────────────────── */
+.label {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-label);
+  line-height: var(--line-height-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.body-s { font-size: var(--font-size-body-s); line-height: var(--line-height-body-s); }
+.muted { color: var(--color-text-muted); }
+.status-error { color: var(--status-error); }
+
+/* ── Layout ─────────────────────────────────────────────── */
+.page {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-7) var(--page-gutter);
+}
+
+/* ── Navigation ─────────────────────────────────────────── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: var(--nav-h);
+  background: var(--color-bg);
+  border-bottom: var(--border-hair);
+}
+.nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  height: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 var(--page-gutter);
+}
+.nav__actions { display: flex; align-items: center; gap: var(--space-3); }
+
+/* ── Wordmark (placeholder, §7) ─────────────────────────── */
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 96px;
+  color: var(--color-text);
+}
+.wordmark:hover { color: var(--color-text); text-decoration: none; }
+.wordmark__mark {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  background: var(--oxide-500);
+}
+.wordmark__name {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-wordmark);
+  font-stretch: var(--font-stretch-wordmark);
+  font-size: 20px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--control-h);
+  padding: 0 var(--space-5);
+  border: none;
+  border-radius: var(--radius-1);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-button);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard);
+}
+.btn--s {
+  height: var(--control-h-s);
+  padding: 0 var(--space-4);
+  font-size: var(--font-size-button-s);
+}
+.btn--primary { background: var(--color-accent); color: var(--color-on-accent); }
+.btn--primary:hover { background: var(--color-accent-hover); }
+.btn--primary:active { background: var(--color-accent-active); }
+
+/* ── Track rule (signature motif) ───────────────────────── */
+.track {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+.track__rule { flex: 1; height: 1px; background: var(--color-border); }
+.track__value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-label);
+  letter-spacing: var(--tracking-label);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.track[aria-current="true"] .track__rule { height: 2px; background: var(--color-accent); }
