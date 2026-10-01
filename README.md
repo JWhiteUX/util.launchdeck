@@ -18,15 +18,45 @@ Select **Mark reviewed** to clear amber. This writes only to the local database,
 - npm, for workspaces.
 - `better-sqlite3` is a native module. npm normally installs a prebuilt binary. Xcode Command Line Tools (`xcode-select --install`) are needed only if npm has to build it from source.
 
+## Local setup
+
+1. Check Node. It must print v20.12 or later.
+
+   ```sh
+   node -v
+   ```
+
+2. Clone and install.
+
+   ```sh
+   git clone https://github.com/JWhiteUX/util.launchdeck.git
+   cd util.launchdeck
+   npm install
+   ```
+
+3. Create `.env` from the example. The defaults run in mock mode, with no AEM access needed.
+
+   ```sh
+   cp .env.example .env
+   ```
+
+4. Check the install. All three must exit 0.
+
+   ```sh
+   npm run lint && npm run typecheck && npm test
+   ```
+
+5. Start both apps.
+
+   ```sh
+   npm run dev
+   ```
+
+   The API server runs on `127.0.0.1:4000` and the web app on port 3001. Open **http://localhost:3001**. Use `localhost`, not `127.0.0.1`, because Vite listens on `localhost` only. Ctrl+C stops both.
+
+The database is created on first start at `data/launchdeck.db`. The first poll of a newly bound folder records every existing asset as ADDED. After that, only changes are recorded.
+
 ## Quick start (mock mode)
-
-```sh
-npm install
-cp .env.example .env
-npm run dev
-```
-
-`npm run dev` starts the API server on port 4000 and the web app on port 3001. Ctrl+C stops both. Open http://localhost:3001.
 
 1. Select **New campaign** and bind it to `/content/dam/brand/fall-launch`. ADDED events appear in the activity feed without a refresh.
 2. Try these changes. Each one shows up on the next poll (every `WATCH_INTERVAL_SEC` seconds, default 60).
@@ -43,6 +73,26 @@ Restore the fixtures when you are done:
 ```sh
 git checkout -- fixtures/aem
 ```
+
+To experiment without touching the tracked fixtures, point the app at a copy:
+
+```sh
+cp -R fixtures/aem /tmp/launchdeck-fixtures
+AEM_FIXTURES_DIR=/tmp/launchdeck-fixtures WATCH_INTERVAL_SEC=15 npm run dev
+```
+
+## Using the dashboard
+
+| Area | What it does |
+|---|---|
+| **Timeline** | One bar per campaign, from start date to launch date. Each campaign keeps its own colour, assigned in creation order. After eight campaigns, bars are ink. The orange line marks today. |
+| **Height** | `DEFAULT` fits the campaigns. `2×` and `3×` reserve room for at least 8 and 12 rows. The choice is remembered in the browser. |
+| **Scale** | Day, week or month columns. |
+| **Campaign list** | Below the chart. Shows the colour swatch, dates and readiness badge. Select a row, or a bar, to open its activity. |
+| **Activity** | Campaign details and the change feed: type, asset, file type, user and local time. Filter by user or file type. Unreviewed rows are highlighted. **Mark reviewed** clears them. |
+| **Watcher** | Each watched folder's last poll, asset count and last error. `JCR FALLBACK` means the audit log isn't readable. **Poll now** runs a poll immediately. |
+
+Times are stored in UTC and shown in your local time zone. The UI follows the macOS light or dark appearance.
 
 ## Configuration (`.env`)
 
@@ -67,6 +117,50 @@ All settings and credentials are read from `.env` in the repo root and nothing e
 | `AEM_REQUEST_TIMEOUT_MS` | `30000` | — | Timeout for each AEM request attempt, in milliseconds. |
 
 Blank values count as unset. The server log redacts the `Authorization` and `Cookie` request headers, and token, password and secret fields.
+
+In live mode, settings are checked at startup. A missing or invalid key stops the server with a message that names the key but never prints its value, for example `AEM_HOST is required when AEM_MODE=live`.
+
+### Example `.env` files
+
+Mock mode (the default; no AEM needed):
+
+```ini
+AEM_MODE=mock
+```
+
+AEM as a Cloud Service with a local development token (simplest live setup; the token lasts 24 h):
+
+```ini
+AEM_MODE=live
+AEM_FLAVOR=cloud
+AEM_AUTH=devtoken
+AEM_HOST=https://author-p12345-e67890.adobeaemcloud.com
+AEM_DEV_TOKEN=<paste token>
+AEM_SMOKE_FOLDER=/content/dam/brand
+```
+
+AEM as a Cloud Service with service credentials (no daily token refresh):
+
+```ini
+AEM_MODE=live
+AEM_FLAVOR=cloud
+AEM_AUTH=service
+AEM_HOST=https://author-p12345-e67890.adobeaemcloud.com
+AEM_SERVICE_CREDENTIALS_PATH=/Users/you/.secrets/aem-service-credentials.json
+```
+
+AEM 6.5 with basic auth:
+
+```ini
+AEM_MODE=live
+AEM_FLAVOR=65
+AEM_AUTH=basic
+AEM_HOST=https://author.example.com
+AEM_USERNAME=launchdeck-reader
+AEM_PASSWORD=<password>
+```
+
+Use a read-only account. Launchdeck never writes to AEM, so it needs no write permissions.
 
 ## Mock vs live mode
 
@@ -182,6 +276,19 @@ rm data/launchdeck.db
 ```
 
 The next start creates an empty database.
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| `Port 3001 is already in use` or `EADDRINUSE` on 4000 | Another process holds the port. Set `WEB_PORT` or `PORT` in `.env`, or stop that process. Find it with `lsof -nP -iTCP:3001 -sTCP:LISTEN`. Port 3000 is avoided on purpose because Docker often uses it. |
+| The page says "Can't load campaigns" | The API server isn't running or crashed. Check the `[server]` lines in the `npm run dev` output. |
+| `http://127.0.0.1:3001` doesn't load | Use `http://localhost:3001`. |
+| `was compiled against a different Node.js version` | Run `npm rebuild better-sqlite3` after a Node upgrade. |
+| `Invalid environment:` on start | Fix each key it lists in `.env`. See [Configuration](#configuration-env). |
+| Live mode: 401 after a day | The development token expired. Generate a new one in the Developer Console. |
+| Live mode: no users in the feed, `JCR FALLBACK` | The account can't read `/var/audit/com.day.cq.dam`. See [AEM permissions](#aem-permissions). Restart the server after granting access. |
+| Start fresh | Stop the server and run `rm data/launchdeck.db`. |
 
 ## Project layout
 
