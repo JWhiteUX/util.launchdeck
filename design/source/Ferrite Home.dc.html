@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FBFAF7;color:#14161A;font-family:Archivo,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#B8471F;text-decoration:none}
+a:hover{color:#963817;text-decoration:underline}
+button{font-family:inherit}
+:focus-visible{outline:2px solid #B8471F;outline-offset:2px}
+</style>
+</helmet>
+
+<header style="position:sticky;top:0;z-index:10;background:#FBFAF7;border-bottom:1px solid #D9D8D2">
+  <div style="max-width:1360px;margin:0 auto;padding:0 clamp(20px,4vw,48px);height:64px;display:flex;align-items:center;gap:40px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:14px;height:14px;background:#B8471F"></div>
+      <div style="font-weight:800;font-stretch:75%;letter-spacing:0.04em;font-size:20px">FERRITE</div>
+    </div>
+    <nav style="display:flex;gap:28px;flex:1;flex-wrap:wrap;font-weight:500;font-size:15px">
+      <a href="#products" style="color:#14161A">Drives</a>
+      <a href="#compare" style="color:#14161A">Compare</a>
+      <a href="#enterprise" style="color:#14161A">Enterprise</a>
+      <a href="#" style="color:#14161A">Support</a>
+    </nav>
+    <div style="display:flex;gap:8px">
+      <button style="height:36px;padding:0 16px;border-radius:2px;border:1px solid #14161A;background:transparent;color:#14161A;font-weight:600;font-size:14px;cursor:pointer" style-hover="background:#14161A;color:#FBFAF7">Sign in</button>
+      <button style="height:36px;padding:0 16px;border-radius:2px;border:none;background:#B8471F;color:#FBFAF7;font-weight:600;font-size:14px;cursor:pointer" style-hover="background:#963817">Shop</button>
+    </div>
+  </div>
+</header>
+
+<section style="max-width:1360px;margin:0 auto;padding:clamp(48px,7vw,96px) clamp(20px,4vw,48px)">
+  <div style="display:flex;align-items:center;gap:16px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:0.08em;color:#5B616B;margin-bottom:32px">
+    <span>00 / FERRITE CORE HDD</span><span style="flex:1;height:1px;background:#D9D8D2"></span><span>NEW · 2026</span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:48px;align-items:start">
+    <div>
+      <h1 style="margin:0;font-size:clamp(52px,7vw,88px);line-height:0.95;letter-spacing:-0.03em;font-weight:700;font-stretch:87.5%;text-wrap:balance">Capacity you can plan around.</h1>
+      <p style="margin:24px 0 0;font-size:18px;line-height:1.55;color:#5B616B;max-width:52ch;text-wrap:pretty">Ferrite Core drives are specified to the number and tested to it. Pick a capacity and see exactly what you get.</p>
+      <div style="margin-top:40px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:0.08em;color:#5B616B;margin-bottom:12px">01 / CAPACITY</div>
+        <div style="display:flex;border:1px solid #14161A;border-radius:2px;max-width:480px">
+          <sc-for list="{{ caps }}" as="c" hint-placeholder-count="4">
+            <button onClick="{{ c.pick }}" style="flex:1;height:44px;border:none;border-left:{{ c.divider }};background:{{ c.bg }};color:{{ c.fg }};font-family:'JetBrains Mono',monospace;font-size:14px;cursor:pointer;transition:background 200ms cubic-bezier(0.2,0,0,1)">{{ c.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="margin-top:32px;display:grid;gap:0;max-width:480px">
+        <div style="display:flex;align-items:baseline;gap:12px;padding:12px 0;border-bottom:1px solid #D9D8D2">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;color:#5B616B">02 / SUSTAINED</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-variant-numeric:tabular-nums">{{ sel.mbps }} MB/s</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:12px;padding:12px 0;border-bottom:1px solid #D9D8D2">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;color:#5B616B">03 / CACHE</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-variant-numeric:tabular-nums">{{ sel.cache }} MB</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:12px;padding:12px 0;border-bottom:1px solid #D9D8D2">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;color:#5B616B">04 / WARRANTY</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace;font-size:14px">{{ sel.warranty }}</span>
+        </div>
+      </div>
+      <div style="margin-top:32px;display:flex;flex-wrap:wrap;align-items:center;gap:24px">
+        <button style="height:48px;padding:0 24px;border-radius:2px;border:none;background:#B8471F;color:#FBFAF7;font-weight:600;font-size:15px;cursor:pointer" style-hover="background:#963817">Configure drive</button>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:500;letter-spacing:-0.02em;font-variant-numeric:tabular-nums">${{ sel.price }}</div>
+      </div>
+    </div>
+    <sc-if value="{{ isSplit }}" hint-placeholder-val="{{ true }}">
+      <div style="aspect-ratio:4/5;background:repeating-linear-gradient(135deg,#ECEAE4 0 12px,#E5E3DC 12px 24px);display:flex;align-items:flex-end;padding:20px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;color:#5B616B">PHOTO / CORE HDD, 3/4 VIEW ON PAPER, HARD KEY LIGHT</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isSpec }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#14161A;color:#FBFAF7;padding:40px;aspect-ratio:4/5;display:flex;flex-direction:column;justify-content:space-between">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;color:#A3A8B0">SELECTED CONFIGURATION</div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:clamp(72px,10vw,140px);font-weight:500;letter-spacing:-0.04em;line-height:0.9">{{ sel.label }}</div>
+          <div style="margin-top:16px;height:2px;background:#B8471F;width:{{ sel.bar }}"></div>
+          <div style="margin-top:16px;font-size:16px;color:#A3A8B0">Ferrite Core · 7200 RPM · CMR</div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</section>
+
+<section id="products" style="background:#F4F3EF;border-top:1px solid #D9D8D2;border-bottom:1px solid #D9D8D2">
+  <div style="max-width:1360px;margin:0 auto;padding:clamp(64px,7vw,96px) clamp(20px,4vw,48px)">
+    <div style="display:flex;align-items:center;gap:16px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:0.08em;color:#5B616B;margin-bottom:24px">
+      <span>05 / LINEUP</span><span style="flex:1;height:1px;background:#D9D8D2"></span><span>3 FAMILIES</span>
+    </div>
+    <h2 style="margin:0 0 48px;font-size:clamp(28px,4vw,36px);line-height:1.1;letter-spacing:-0.015em;font-weight:700;font-stretch:87.5%;max-width:22ch;text-wrap:balance">One family per job. Specs on the box match specs in the rack.</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:24px">
+      <div style="background:#FBFAF7;border:1px solid #D9D8D2;padding:32px;display:flex;flex-direction:column;gap:20px;transition:border-color 120ms" style-hover="border-color:#14161A">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;color:#5B616B">HDD</span><span style="height:22px;padding:0 10px;border-radius:999px;background:#2E6B4F;color:#FBFAF7;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;display:flex;align-items:center">IN STOCK</span></div>
+        <div style="aspect-ratio:4/3;background:repeating-linear-gradient(135deg,#ECEAE4 0 12px,#E5E3DC 12px 24px);display:flex;align-items:flex-end;padding:12px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;color:#5B616B">PHOTO / CORE HDD</span></div>
+        <div><h3 style="margin:0;font-size:28px;line-height:1.15;letter-spacing:-0.01em;font-weight:600;font-stretch:87.5%">Ferrite Core</h3><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#5B616B">High‑capacity 3.5" drives for NAS, archive and surveillance.</p></div>
+        <div style="display:grid">
+          <div style="display:flex;padding:10px 0;border-top:1px solid #D9D8D2;font-size:14px"><span style="color:#5B616B">Capacity</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace">8–24 TB</span></div>
+          <div style="display:flex;padding:10px 0;border-top:1px solid #D9D8D2;font-size:14px"><span style="color:#5B616B">Interface</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace">SATA 6 Gb/s</span></div>
+          <div style="display:flex;padding:10px 0;border-top:1px solid #D9D8D2;border-bottom:1px solid #D9D8D2;font-size:14px"><span style="color:#5B616B">Workload</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace">550 TB/yr</span></div>
+        </div>
+        <a href="#" style="font-weight:600;font-size:15px">View Core →</a>
+      </div>
+      <div style="background:#FBFAF7;border:1px solid #D9D8D2;padding:32px;display:flex;flex-direction:column;gap:20px;transition:border-color 120ms" style-hover="border-color:#14161A">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;color:#5B616B">NVME SSD</span><span style="height:22px;padding:0 10px;border-radius:999px;border:1px solid #9A6200;color:#9A6200;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.06em;display:flex;align-items:center">LOW STOCK</span></div>
+        <div style="aspect-ratio:4/3;background:repeating-linear-gradient(135deg,#ECEAE4 0 12px,#E5E3DC 12px 24px);display:flex;align-items:flex-end;padding:12px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;color:#5B616B">PHOTO / FLUX M.2 SSD</span></div>
+        <div><h3 style="margin:0;font-size:28px;line-height:1.15;letter-spacing:-0.01em;font-weight:600;font-stretch:87.5%">Ferrite Flux</h3><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#5B616B">PCIe 5.0 M.2 drives for editing, builds and scratch.</p></div>
+        <div style="display:grid">
+          <div style="display:flex;padding:10px 0;border-top:1px solid #D9D8D2;font-size:14px"><span style="color:#5B616B">Capacity</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace">1–8 TB</span></div>
+          <div style="display:flex;padding:10px 0;border-top:1px solid #D9D8D2;font-size:14px"><span style="color:#5B616B">Seq. read</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace">14,000 MB/s</span></div>
+          <div style="display:flex;padding:10px 0;border-top:1px solid #D9D8D2;border-bottom:1px solid #D9D8D2;font-size:14px"><span style="color:#5B616B">Endurance</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace">1,200 TBW/TB</span></div>
+        </div>
+        <a href="#" style="font-weight:600;font-size:15px">View Flux →</a>
+      </div>
+      <div style="background:#FBFAF7;border:1px solid #D9D8D2;padding:32px;display:flex;flex-direction:column;gap:20px;transition:border-color 120ms" style-hover="border-color:#14161A">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;color:#5B616B">ARRAY</span></div>
+        <div style="aspect-ratio:4/3;background:repeating-linear-gradient(135deg,#ECEAE4 0 12px,#E5E3DC 12px 24px);display:flex;align-items:flex-end;padding:12px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;color:#5B616B">PHOTO / ARRAY 4U, FRONT</span></div>
+        <div><h3 style="margin:0;font-size:28px;line-height:1.15;letter-spacing:-0.01em;font-weight:600;font-stretch:87.5%">Ferrite Array</h3><p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#5B616B">4U, 60‑bay JBOD and managed systems for the data center.</p></div>
+        <div style="display:grid">
+          <div style="display:flex;padding:10px 0;border-top:1px solid #D9D8D2;font-size:14px"><span style="color:#5B616B">Raw capacity</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace">to 1.44 PB</span></div>
+          <div style="display:flex;padding:10px 0;border-top:1px solid #D9D8D2;font-size:14px"><span style="color:#5B616B">Bays</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace">60 × 3.5"</span></div>
+          <div style="display:flex;padding:10px 0;border-top:1px solid #D9D8D2;border-bottom:1px solid #D9D8D2;font-size:14px"><span style="color:#5B616B">Host</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace">SAS 24G</span></div>
+        </div>
+        <a href="#" style="font-weight:600;font-size:15px">View Array →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="compare" style="max-width:1360px;margin:0 auto;padding:clamp(64px,7vw,96px) clamp(20px,4vw,48px)">
+  <div style="display:flex;align-items:center;gap:16px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:0.08em;color:#5B616B;margin-bottom:24px">
+    <span>06 / COMPARE</span><span style="flex:1;height:1px;background:#D9D8D2"></span><span>CORE HDD</span>
+  </div>
+  <h2 style="margin:0 0 40px;font-size:clamp(28px,4vw,36px);line-height:1.1;letter-spacing:-0.015em;font-weight:700;font-stretch:87.5%">Every capacity, side by side.</h2>
+  <div style="overflow-x:auto;border:1px solid #D9D8D2">
+    <table style="width:100%;min-width:640px;border-collapse:collapse;font-size:14px">
+      <thead>
+        <tr style="background:#ECEAE4;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;color:#5B616B;text-align:right">
+          <th style="text-align:left;padding:16px 20px;font-weight:500">SPEC</th>
+          <th style="padding:16px 20px;font-weight:500">8 TB</th>
+          <th style="padding:16px 20px;font-weight:500">12 TB</th>
+          <th style="padding:16px 20px;font-weight:500;background:#F6E3D9;color:#7A2E13">16 TB · POPULAR</th>
+          <th style="padding:16px 20px;font-weight:500">24 TB</th>
+        </tr>
+      </thead>
+      <tbody style="font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;text-align:right">
+        <tr style="border-top:1px solid #D9D8D2"><td style="text-align:left;padding:16px 20px;font-family:Archivo,sans-serif;font-weight:500">Sustained transfer</td><td style="padding:16px 20px">250 MB/s</td><td style="padding:16px 20px">260 MB/s</td><td style="padding:16px 20px;background:#F6E3D9">275 MB/s</td><td style="padding:16px 20px">285 MB/s</td></tr>
+        <tr style="border-top:1px solid #D9D8D2"><td style="text-align:left;padding:16px 20px;font-family:Archivo,sans-serif;font-weight:500">Cache</td><td style="padding:16px 20px">256 MB</td><td style="padding:16px 20px">256 MB</td><td style="padding:16px 20px;background:#F6E3D9">512 MB</td><td style="padding:16px 20px">512 MB</td></tr>
+        <tr style="border-top:1px solid #D9D8D2"><td style="text-align:left;padding:16px 20px;font-family:Archivo,sans-serif;font-weight:500">MTBF</td><td style="padding:16px 20px">1.0M h</td><td style="padding:16px 20px">1.2M h</td><td style="padding:16px 20px;background:#F6E3D9">2.5M h</td><td style="padding:16px 20px">2.5M h</td></tr>
+        <tr style="border-top:1px solid #D9D8D2"><td style="text-align:left;padding:16px 20px;font-family:Archivo,sans-serif;font-weight:500">Warranty</td><td style="padding:16px 20px">3 yr</td><td style="padding:16px 20px">3 yr</td><td style="padding:16px 20px;background:#F6E3D9">5 yr</td><td style="padding:16px 20px">5 yr</td></tr>
+        <tr style="border-top:1px solid #D9D8D2"><td style="text-align:left;padding:16px 20px;font-family:Archivo,sans-serif;font-weight:500">Price</td><td style="padding:16px 20px">$189</td><td style="padding:16px 20px">$249</td><td style="padding:16px 20px;background:#F6E3D9">$329</td><td style="padding:16px 20px">$479</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="enterprise" style="background:#14161A;color:#FBFAF7">
+  <div style="max-width:1360px;margin:0 auto;padding:clamp(64px,8vw,128px) clamp(20px,4vw,48px)">
+    <div style="display:flex;align-items:center;gap:16px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:0.08em;color:#A3A8B0;margin-bottom:32px">
+      <span>07 / ENTERPRISE</span><span style="flex:1;height:1px;background:#2A2E35"></span><span style="color:#E08A63">ARRAY 60</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:48px;align-items:end">
+      <div>
+        <h2 style="margin:0;font-size:clamp(44px,6vw,64px);line-height:1;letter-spacing:-0.025em;font-weight:700;font-stretch:87.5%;text-wrap:balance">A petabyte in four rack units.</h2>
+        <p style="margin:24px 0 0;font-size:18px;line-height:1.55;color:#A3A8B0;max-width:48ch;text-wrap:pretty">Sixty bays, dual controllers, and drive‑level telemetry your monitoring stack can read directly.</p>
+        <div style="margin-top:32px;display:flex;flex-wrap:wrap;gap:12px">
+          <button style="height:48px;padding:0 24px;border-radius:2px;border:none;background:#B8471F;color:#FBFAF7;font-weight:600;font-size:15px;cursor:pointer" style-hover="background:#963817">Talk to sales</button>
+          <button style="height:48px;padding:0 24px;border-radius:2px;border:1px solid #A3A8B0;background:transparent;color:#FBFAF7;font-weight:600;font-size:15px;cursor:pointer" style-hover="border-color:#FBFAF7">Download datasheet</button>
+        </div>
+      </div>
+      <div style="display:grid">
+        <div style="display:flex;align-items:baseline;padding:20px 0;border-top:1px solid #2A2E35"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;color:#A3A8B0">RAW CAPACITY</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:500;letter-spacing:-0.02em">1.44 PB</span></div>
+        <div style="display:flex;align-items:baseline;padding:20px 0;border-top:1px solid #2A2E35"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;color:#A3A8B0">THROUGHPUT</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:500;letter-spacing:-0.02em">12 GB/s</span></div>
+        <div style="display:flex;align-items:baseline;padding:20px 0;border-top:1px solid #2A2E35;border-bottom:1px solid #2A2E35"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;color:#A3A8B0">RACK SPACE</span><span style="flex:1"></span><span style="font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:500;letter-spacing:-0.02em">4U</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer style="background:#14161A;color:#A3A8B0;border-top:1px solid #2A2E35">
+  <div style="max-width:1360px;margin:0 auto;padding:64px clamp(20px,4vw,48px) 40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:32px">
+    <div style="display:flex;align-items:center;gap:10px;align-self:start">
+      <div style="width:14px;height:14px;background:#B8471F"></div>
+      <div style="font-weight:800;font-stretch:75%;letter-spacing:0.04em;font-size:20px;color:#FBFAF7">FERRITE</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;margin-bottom:6px">PRODUCTS</span><a href="#" style="color:#FBFAF7">Core HDD</a><a href="#" style="color:#FBFAF7">Flux SSD</a><a href="#" style="color:#FBFAF7">Array</a></div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;margin-bottom:6px">SUPPORT</span><a href="#" style="color:#FBFAF7">Warranty</a><a href="#" style="color:#FBFAF7">Drive health tool</a><a href="#" style="color:#FBFAF7">Datasheets</a></div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;margin-bottom:6px">COMPANY</span><a href="#" style="color:#FBFAF7">About</a><a href="#" style="color:#FBFAF7">Sustainability</a><a href="#" style="color:#FBFAF7">Careers</a></div>
+  </div>
+  <div style="max-width:1360px;margin:0 auto;padding:20px clamp(20px,4vw,48px) 32px;border-top:1px solid #2A2E35;font-size:13px">© 2026 Ferrite Systems. Fictional brand for design exploration.</div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroVariant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;split&quot;,&quot;spec&quot;],&quot;default&quot;:&quot;split&quot;,&quot;tsType&quot;:&quot;'split'|'spec'&quot;},&quot;units&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;TB&quot;,&quot;TiB&quot;],&quot;default&quot;:&quot;TB&quot;,&quot;tsType&quot;:&quot;'TB'|'TiB'&quot;}}">
+class Component extends DCLogic {
+  state = { i: 2 };
+  renderVals() {
+    const tib = (this.props.units ?? 'TB') === 'TiB';
+    const data = [
+      { tb: 8, mbps: 250, cache: 256, warranty: '3 years', price: 189 },
+      { tb: 12, mbps: 260, cache: 256, warranty: '3 years', price: 249 },
+      { tb: 16, mbps: 275, cache: 512, warranty: '5 years', price: 329 },
+      { tb: 24, mbps: 285, cache: 512, warranty: '5 years', price: 479 },
+    ];
+    const fmt = tb => tib ? (tb * 1e12 / 2 ** 40).toFixed(1) + ' TiB' : tb + ' TB';
+    const caps = data.map((d, i) => {
+      const on = i === this.state.i;
+      return { label: fmt(d.tb), pick: () => this.setState({ i }), bg: on ? '#14161A' : 'transparent', fg: on ? '#FBFAF7' : '#14161A', divider: i ? '1px solid #14161A' : 'none' };
+    });
+    const s = data[this.state.i];
+    const variant = this.props.heroVariant ?? 'split';
+    return {
+      caps,
+      sel: { ...s, label: fmt(s.tb), bar: (s.tb / 24 * 100) + '%' },
+      isSplit: variant === 'split',
+      isSpec: variant === 'spec',
+    };
+  }
+}
+</script>
+</body>
+</html>
