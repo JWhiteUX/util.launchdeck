@@ -19,6 +19,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: var(--space-4);
 }
 .gantt-scale {
@@ -27,7 +28,7 @@
   border-radius: var(--radius-1);
 }
 .gantt-scale__item {
-  flex: 1;
+  flex: 1 0 auto;
   min-width: 72px;
   height: var(--control-h-segmented);
   padding: 0 var(--space-4);
@@ -48,6 +49,7 @@
 
 /* ── Chart: frappe variables remapped to Ferrite tokens ──── */
 .gantt-view .gantt-container {
+  overflow-y: hidden;
   --g-arrow-color: var(--color-text);
   --g-bar-color: var(--color-text);
   --g-bar-border: var(--color-text);
@@ -139,11 +141,8 @@
 .gantt-view .gantt .bar-expected-progress,
 .gantt-view .gantt .handle { display: none; }
 
-/* Status strip (4px, drawn by GanttView after each render) */
-.gantt-view .gantt .bar-strip { fill: var(--color-text); }
-.gantt-view .gantt .bar--green .bar-strip { fill: var(--status-ok); }
-.gantt-view .gantt .bar--amber .bar-strip { fill: var(--status-warn); }
-.gantt-view .gantt .bar--red .bar-strip { fill: var(--status-error); }
+/* Campaign colour (inline fill from --series-n, set by GanttView). Status lives in the list badges. */
+.gantt-view .gantt .bar-wrapper.bar--series .bar-label:not(.big) { fill: var(--color-on-series); }
 
 /* Selected bar: 2px accent outline */
 .gantt-view .gantt .bar-wrapper.bar--selected .bar {
@@ -193,6 +192,9 @@
   background: var(--color-bg-alt);
 }
 .gantt-list__name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   font-weight: var(--font-weight-medium);
   font-size: var(--font-size-body-s);
   overflow-wrap: anywhere;
@@ -208,3 +210,4 @@
   .gantt-list__dates { grid-column: 1; grid-row: 2; }
   .gantt-list__item .pill { grid-column: 2; grid-row: 1 / span 2; }
 }
+.gantt-view__toolbar .gantt-scale + .label { margin-left: var(--space-5); }

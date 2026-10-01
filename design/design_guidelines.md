@@ -41,6 +41,8 @@ Engineered, candid, calm, exact. Not flashy, not playful.
 ## Signature motif: track rules
 Every section opens with a track rule: a mono index label (`01 / TIMELINE`), a flexible hairline, and an optional right-aligned mono value. Indices are two digits and zero-padded. An active or selected track gets a 2px oxide rule. Use the same pattern for spec lists and the watcher health panel.
 
+In launchdeck, section titles drop the index (`TIMELINE`, not `01 / TIMELINE`); the hairline and mono label remain.
+
 ## Logo / wordmark
 There is no final logo yet. The interim wordmark is a solid 14×14 oxide square (one magnetic bit) followed by the product name in uppercase Archivo 800, 75% stretch, 0.04em tracking. In this app the name is **LAUNCHDECK**. Clear space equals the square's height on all sides, and the minimum width is 96px. A designed logo should keep the square-bit concept.
 

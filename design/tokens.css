@@ -40,6 +40,20 @@
   /* Placeholder stripe (reference page imagery placeholders) */
   --placeholder-stripe: #E5E3DC;
 
+  /* Campaign identity (categorical, fixed order; validated with the dataviz palette checker:
+     CVD and normal-vision separation on paper-0 and ink-900). Never status, never oxide. */
+  --series-1: #2C5F9E;
+  --series-2: #3F7A2E;
+  --series-3: #00799A;
+  --series-4: #8C6A00;
+  --series-5: #7A3E8E;
+  --series-6: #00806A;
+  --series-7: #5249A6;
+  --series-8: #B03A6C;
+  --color-on-series: var(--paper-0);
+
+  color-scheme: light;
+
   /* ── 2. Semantic colours (§2.5) ───────────────────────── */
   --color-bg: var(--paper-0);
   --color-bg-alt: var(--paper-100);
@@ -193,6 +207,16 @@
     --color-focus: var(--oxide-300);
     --color-on-accent: var(--ink-900);
     --placeholder-stripe: var(--ink-800);
+    --series-1: #528ED9;
+    --series-2: #609F4F;
+    --series-3: #0A9AC3;
+    --series-4: #AF8504;
+    --series-5: #AD6FC3;
+    --series-6: #04A388;
+    --series-7: #827EE0;
+    --series-8: #D55C8C;
+    --color-on-series: var(--ink-900);
+    color-scheme: dark;
   }
 }
 
@@ -220,6 +244,16 @@
   --color-focus: var(--oxide-300);
   --color-on-accent: var(--ink-900);
   --placeholder-stripe: var(--ink-800);
+  --series-1: #528ED9;
+  --series-2: #609F4F;
+  --series-3: #0A9AC3;
+  --series-4: #AF8504;
+  --series-5: #AD6FC3;
+  --series-6: #04A388;
+  --series-7: #827EE0;
+  --series-8: #D55C8C;
+  --color-on-series: var(--ink-900);
+  color-scheme: dark;
 }
 
 @media (prefers-reduced-motion: reduce) {

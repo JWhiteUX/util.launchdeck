@@ -231,3 +231,19 @@ p { text-wrap: pretty; max-width: var(--measure-body); }
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* Scrollbars: thin, muted, theme-aware (color-scheme in tokens.css handles native parts). */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+*:hover { scrollbar-color: var(--color-text-muted) transparent; }
+
+/* Campaign identity swatch (paired with the name; colour is never the only cue). */
+.swatch {
+  display: inline-block;
+  flex: none;
+  width: 10px;
+  height: 10px;
+  background: var(--swatch, var(--color-text));
+}

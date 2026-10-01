@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CampaignView } from '@launchdeck/shared';
-import { barClass, ganttId, rangePadding, tasksKey, toGanttTasks } from './gantt.ts';
+import { barClass, containerHeight, ganttId, isChartHeight, rangePadding, seriesSlots, seriesVar, tasksKey, toGanttTasks } from './gantt.ts';
 
 const campaign = (over: Partial<CampaignView> = {}): CampaignView => ({
   id: 'c1',
@@ -76,5 +76,36 @@ describe('rangePadding', () => {
 
   it('handles no campaigns', () => {
     expect(rangePadding([], 'Month', '2026-10-05')).toEqual(['62d', '62d']);
+  });
+});
+
+describe('seriesSlots', () => {
+  const mk = (id: string, createdAt: string) => ({ id, createdAt });
+  it('assigns slots in creation order, independent of list order', () => {
+    const slots = seriesSlots([mk('b', '2026-10-02T00:00:00.000Z'), mk('a', '2026-10-01T00:00:00.000Z')]);
+    expect(slots.get('a')).toBe(1);
+    expect(slots.get('b')).toBe(2);
+  });
+  it('never cycles past eight', () => {
+    const many = Array.from({ length: 10 }, (_, i) => mk(`c${i}`, `2026-10-${String(i + 1).padStart(2, '0')}T00:00:00.000Z`));
+    const slots = seriesSlots(many);
+    expect(slots.get('c7')).toBe(8);
+    expect(slots.get('c8')).toBeNull();
+    expect(slots.get('c9')).toBeNull();
+    expect(seriesVar(slots.get('c8'))).toBeUndefined();
+    expect(seriesVar(3)).toBe('var(--series-3)');
+  });
+});
+
+describe('containerHeight', () => {
+  const dims = { headerHeight: 85, barHeight: 32, padding: 16 };
+  it('keeps frappe auto sizing for Default and sets minimum rows for 2x / 3x', () => {
+    expect(containerHeight('Default', dims)).toBe('auto');
+    expect(containerHeight('2x', dims)).toBe(85 + 16 + 48 * 8 - 10);
+    expect(containerHeight('3x', dims)).toBe(85 + 16 + 48 * 12 - 10);
+  });
+  it('validates stored values', () => {
+    expect(isChartHeight('2x')).toBe(true);
+    expect(isChartHeight('4x')).toBe(false);
   });
 });

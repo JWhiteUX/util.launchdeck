@@ -80,6 +80,8 @@ declare module 'frappe-gantt' {
     bars: GanttBar[];
     $svg: SVGSVGElement;
     $container: HTMLDivElement;
+    /** Grid height in px, set on every render. */
+    grid_height: number;
     /** Called on every redraw (constructor, refresh, view change, infinite-padding extension). */
     render(): void;
     refresh(tasks: GanttTask[]): void;

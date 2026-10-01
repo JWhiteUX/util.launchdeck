@@ -24,14 +24,14 @@ function Time({ iso, children }: { iso: string | null; children: string }) {
   );
 }
 
-function FolderRow({ folder, index, now }: { folder: FolderHealth; index: number; now: number }) {
+function FolderRow({ folder, now }: { folder: FolderHealth; now: number }) {
   const status = folderRowStatus(folder, now);
   const error = status.kind === 'error';
   return (
     <li className="health__folder">
       <div className="track health__row">
         <span className="label health__label" title={folder.folderPath}>
-          {String(index + 1).padStart(2, '0')} / {folderLabel(folder.folderPath)}
+          {folderLabel(folder.folderPath)}
         </span>
         <span className="track__rule" />
         <span
@@ -62,7 +62,7 @@ export function WatcherHealth({ health, stream, onPollNow }: WatcherHealthProps)
     <div className="health">
       <div className="track">
         <span className="label" id="watcher-label">
-          03 / WATCHER
+          WATCHER
         </span>
         <span className="track__rule" />
         <span className="track__value">{STREAM_LABEL[stream]}</span>
@@ -84,8 +84,8 @@ export function WatcherHealth({ health, stream, onPollNow }: WatcherHealthProps)
             <p className="body-s muted">No folders watched yet.</p>
           ) : (
             <ol className="health__folders">
-              {health.folders.map((f, i) => (
-                <FolderRow key={f.folderPath} folder={f} index={i} now={now} />
+              {health.folders.map((f) => (
+                <FolderRow key={f.folderPath} folder={f} now={now} />
               ))}
             </ol>
           )}

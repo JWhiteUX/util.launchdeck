@@ -166,9 +166,10 @@ Add a mono caption in the bottom-left that describes the required shot. This str
 ### Layout
 - Use the nav and wordmark with the name **LAUNCHDECK**. The single primary action in the nav is "New campaign".
 - The page structure is:
-  1. a track rule, `01 / TIMELINE`, then the Gantt
-  2. a track rule, `02 / WATCHER`, then the health panel
-  3. the detail view, which opens as a side panel or route
+  1. a track rule, `TIMELINE`, then the Gantt
+  2. a track rule, `ACTIVITY`, then the selected campaign's detail
+  3. a track rule, `WATCHER`, then the health panel
+- **Launchdeck section titles carry no index numbers** (`TIMELINE`, not `01 / TIMELINE`). The brand's indexed track rule is not used in this app.
 
 ### Campaign status badge
 | State | Pill | Label |
@@ -178,8 +179,10 @@ Add a mono caption in the bottom-left that describes the required shot. This str
 | Red: watcher error, or folder empty within 7 days of launch | solid `--status-error` | `ERROR` / `EMPTY` |
 
 ### Gantt (frappe-gantt overrides in `apps/web/src/styles/gantt.css`)
-- **Bars** have square corners (`rx/ry = 0`), an `--ink-900` fill (`--color-text` in dark mode) and no progress fill. Bar labels are sans 500 at 14px.
-- **Status** is shown as a 4px left edge strip in the status colour. The bar keeps its ink fill, so colour is never the only signal; the badge pill next to the name carries the text.
+- **Bars** have square corners (`rx/ry = 0`) and no progress fill. Each campaign gets a categorical colour, `--series-1` to `--series-8`, assigned in creation order so it never changes when others are added. Past eight campaigns, bars fall back to ink; colours are never cycled. Bar labels are sans 500 at 14px in `--color-on-series`.
+- **Series colours** were validated with the dataviz palette checker (colour-blind and normal-vision separation, contrast) on paper-0 and ink-900, with separate dark-mode steps. They are identity only: never status, never oxide.
+- **Status** is not drawn on the bars. The list under the chart pairs each campaign's colour swatch and name with its status badge, which always carries text.
+- **Height** toggle (`DEFAULT`, `2×`, `3×`) sits beside the scale control. Default fits the campaigns; 2× and 3× reserve at least 8 and 12 rows. The choice is remembered per browser.
 - **Grid** lines are hairlines in `--color-border`. Header text uses the mono label style. The weekend or today column uses `--color-bg-alt`.
 - **Today marker** is a 2px `--color-accent` vertical line.
 - **Selected bar** gets a 2px `--color-accent` outline.
@@ -206,8 +209,8 @@ Add a mono caption in the bottom-left that describes the required shot. This str
 Show one track-rule row per folder:
 
 ```
-01 / FALL-LAUNCH ───────────────────── OK · 2 MIN AGO
-02 / HOLIDAY-PROMO ─────────────── AUDIT DENIED · 1 MIN AGO
+FALL-LAUNCH ───────────────────── OK · 2 MIN AGO
+HOLIDAY-PROMO ─────────────── AUDIT DENIED · 1 MIN AGO
 ```
 
 - The value uses `--color-text-muted` normally and `--status-error` with an `ERROR` prefix when there is an error.
@@ -221,3 +224,6 @@ Show one track-rule row per folder:
 - **Footer:**
   - "Save campaign" (primary) and "Cancel" (secondary).
   - "Delete campaign" (destructive secondary) is left-aligned. Clicking it turns the footer into an inline confirmation ("Delete permanently" / "Keep").
+
+### Scrollbars
+Thin, with a `--color-border` thumb on a transparent track (`--color-text-muted` on hover). `color-scheme` is set in `tokens.css`, so native scrollbars follow the theme.

@@ -36,7 +36,7 @@ export function App() {
         <section className="dashboard__timeline" aria-labelledby="timeline-label">
           <div className="track">
             <span className="label" id="timeline-label">
-              01 / TIMELINE
+              TIMELINE
             </span>
             <span className="track__rule" />
             <span className="track__value">{timelineValue}</span>
@@ -61,7 +61,7 @@ export function App() {
           <section className="dashboard__detail" aria-labelledby="detail-label">
             <div className="track">
               <span className="label" id="detail-label">
-                02 / ACTIVITY
+                ACTIVITY
               </span>
               <span className="track__rule" />
               <span className="track__value">{selected ? selected.name.toUpperCase() : 'NONE SELECTED'}</span>

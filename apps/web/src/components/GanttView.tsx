@@ -2,8 +2,21 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Gantt from 'frappe-gantt';
 import type { GanttTask, GanttViewMode } from 'frappe-gantt';
 import type { CampaignView } from '@launchdeck/shared';
-import { SELECTED_CLASS, VIEW_MODES, ganttId, rangePadding, tasksKey, toGanttTasks } from '../gantt.ts';
-import type { ViewMode } from '../gantt.ts';
+import {
+  HEIGHTS,
+  SELECTED_CLASS,
+  VIEW_MODES,
+  containerHeight,
+  ganttId,
+  isChartHeight,
+  rangePadding,
+  seriesSlots,
+  seriesVar,
+  tasksKey,
+  toGanttTasks,
+} from '../gantt.ts';
+import type { ChartHeight, ViewMode } from '../gantt.ts';
+import type { CSSProperties } from 'react';
 import { formatCalendarDate, todayYmd } from '../time.ts';
 import { StatusBadge } from './StatusBadge.tsx';
 import '../styles/gantt.css';
@@ -14,35 +27,63 @@ export interface GanttViewProps {
   onSelect: (id: string) => void;
 }
 
-const SVG_NS = 'http://www.w3.org/2000/svg';
-const STRIP_WIDTH = 4;
+const BAR_HEIGHT = 32;
+const PADDING = 16;
+const UPPER_HEADER = 45;
+const LOWER_HEADER = 30;
+// frappe's config.header_height = upper + lower + 10.
+const DIMS = { headerHeight: UPPER_HEADER + LOWER_HEADER + 10, barHeight: BAR_HEIGHT, padding: PADDING };
+const HEIGHT_KEY = 'launchdeck.ganttHeight';
 
-/** Redraws wipe the SVG, so status strips and selection are re-applied after every render. */
+function loadHeight(): ChartHeight {
+  try {
+    const v = localStorage.getItem(HEIGHT_KEY);
+    return isChartHeight(v) ? v : 'Default';
+  } catch {
+    return 'Default';
+  }
+}
+
+function saveHeight(h: ChartHeight) {
+  try {
+    localStorage.setItem(HEIGHT_KEY, h);
+  } catch {
+    // Storage unavailable (private window): the choice just isn't remembered.
+  }
+}
+
+/** Redraws wipe the SVG, so campaign colours and selection are re-applied after every render. */
 class LaunchGantt extends Gantt {
   declare selectedId: string | null;
+  /** gantt id → CSS colour (var(--series-n)); absent = neutral ink bar. */
+  declare colors: Map<string, string | undefined>;
 
   override render() {
     super.render();
-    this.decorate();
+    // Resizing the container in decorate() cancels frappe's smooth scroll to today, so redo it.
+    if (this.decorate() && this.options.scroll_to === 'today') this.scroll_current();
   }
 
-  decorate() {
+  /** Returns true when the container was resized. */
+  decorate(): boolean {
     const selected = this.selectedId ? ganttId(this.selectedId) : null;
     for (const bar of this.bars) {
       bar.$bar.querySelector('animate')?.remove();
-      if (!bar.bar_group.querySelector('.bar-strip')) {
-        const strip = document.createElementNS(SVG_NS, 'rect');
-        strip.setAttribute('class', 'bar-strip');
-        strip.setAttribute('x', bar.$bar.getAttribute('x') ?? '0');
-        strip.setAttribute('y', bar.$bar.getAttribute('y') ?? '0');
-        strip.setAttribute('width', String(STRIP_WIDTH));
-        strip.setAttribute('height', bar.$bar.getAttribute('height') ?? '0');
-        bar.$bar.after(strip);
-      }
+      const color = this.colors?.get(bar.task.id);
+      bar.$bar.style.fill = color ?? '';
+      bar.group.classList.toggle('bar--series', Boolean(color));
       bar.group.classList.toggle(SELECTED_CLASS, bar.task.id === selected);
     }
+    // frappe sizes the container to the grid only in 'auto' mode, and never leaves room for the
+    // horizontal scrollbar, which then forces a vertical one. Size it to the grid plus scrollbar.
+    const c = this.$container;
+    const before = c.style.height;
+    // offsetHeight - clientHeight = borders + horizontal scrollbar.
+    const target = `${this.grid_height + (c.offsetHeight - c.clientHeight)}px`;
+    if (before !== target) c.style.height = target;
     // The chart is aria-hidden (the list below is the accessible view); keep its scroll button out of tab order.
-    this.$container.querySelector('.adjust')?.setAttribute('tabindex', '-1');
+    c.querySelector('.adjust')?.setAttribute('tabindex', '-1');
+    return before !== target;
   }
 
   revealSelected() {
@@ -82,12 +123,20 @@ export function GanttView({ campaigns, selectedId, onSelect }: GanttViewProps) {
   const onSelectRef = useRef(onSelect);
   const selectedRef = useRef(selectedId);
   const [mode, setMode] = useState<ViewMode>('Week');
+  const [height, setHeight] = useState<ChartHeight>(loadHeight);
+  const heightRef = useRef(height);
 
   const tasks = useMemo(() => toGanttTasks(campaigns), [campaigns]);
+  const slots = useMemo(() => seriesSlots(campaigns), [campaigns]);
+  const colors = useMemo(
+    () => new Map(campaigns.map((c) => [ganttId(c.id), seriesVar(slots.get(c.id))])),
+    [campaigns, slots],
+  );
 
   useEffect(() => {
     onSelectRef.current = onSelect;
     selectedRef.current = selectedId;
+    heightRef.current = height;
   });
 
   // Create once; refresh only when the rendered task data actually changes.
@@ -95,12 +144,14 @@ export function GanttView({ campaigns, selectedId, onSelect }: GanttViewProps) {
     const host = hostRef.current;
     if (!host || tasks.length === 0) return;
     idMapRef.current = new Map(campaigns.map((c) => [ganttId(c.id), c.id]));
-    const key = tasksKey(tasks);
+    const colorsKey = [...colors].map(([id, v]) => `${id}=${v ?? ''}`).join(',');
+    const key = `${tasksKey(tasks)}|${colorsKey}`;
     const existing = ganttRef.current;
     if (existing && modesRef.current) {
       if (key === keyRef.current) return;
       keyRef.current = key;
       applyPadding(modesRef.current, campaigns);
+      existing.colors = colors;
       const left = existing.$container.scrollLeft;
       existing.refresh(copy(tasks));
       existing.$container.scrollTo({ left, behavior: 'instant' });
@@ -120,15 +171,26 @@ export function GanttView({ campaigns, selectedId, onSelect }: GanttViewProps) {
       today_button: false,
       view_mode_select: false,
       bar_corner_radius: 0,
-      bar_height: 32,
-      padding: 16,
+      bar_height: BAR_HEIGHT,
+      padding: PADDING,
+      upper_header_height: UPPER_HEADER,
+      lower_header_height: LOWER_HEADER,
+      container_height: containerHeight(heightRef.current, DIMS),
       scroll_to: 'today',
       on_click: (task) => onSelectRef.current(idMapRef.current.get(task.id) ?? task.id),
     });
     gantt.selectedId = selectedRef.current;
+    gantt.colors = colors;
     gantt.decorate();
     ganttRef.current = gantt;
-  }, [tasks, campaigns, mode]);
+  }, [tasks, campaigns, mode, colors]);
+
+  useEffect(() => {
+    saveHeight(height);
+    const gantt = ganttRef.current;
+    if (!gantt) return;
+    gantt.update_options({ container_height: containerHeight(height, DIMS) });
+  }, [height]);
 
   useEffect(() => {
     const gantt = ganttRef.current;
@@ -157,6 +219,22 @@ export function GanttView({ campaigns, selectedId, onSelect }: GanttViewProps) {
   return (
     <div className="gantt-view">
       <div className="gantt-view__toolbar">
+        <span className="label" id="gantt-height-label">
+          HEIGHT
+        </span>
+        <div className="gantt-scale" role="group" aria-labelledby="gantt-height-label">
+          {HEIGHTS.map((h) => (
+            <button
+              key={h}
+              type="button"
+              className="gantt-scale__item"
+              aria-pressed={height === h}
+              onClick={() => setHeight(h)}
+            >
+              {h === 'Default' ? 'DEFAULT' : h.replace('x', '×')}
+            </button>
+          ))}
+        </div>
         <span className="label" id="gantt-scale-label">
           SCALE
         </span>
@@ -186,7 +264,14 @@ export function GanttView({ campaigns, selectedId, onSelect }: GanttViewProps) {
               aria-current={c.id === selectedId ? 'true' : undefined}
               onClick={() => onSelect(c.id)}
             >
-              <span className="gantt-list__name">{c.name}</span>
+              <span className="gantt-list__name">
+                <span
+                  className="swatch"
+                  aria-hidden="true"
+                  style={{ '--swatch': seriesVar(slots.get(c.id)) } as CSSProperties}
+                />
+                {c.name}
+              </span>
               <span className="visually-hidden"> · </span>
               <span className="gantt-list__dates mono">
                 {formatCalendarDate(c.startDate)} – {formatCalendarDate(c.launchDate)}

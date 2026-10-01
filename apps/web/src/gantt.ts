@@ -55,3 +55,35 @@ export function rangePadding(
   const last = Math.max(...campaigns.map((c) => dayNumber(c.launchDate)));
   return [`${base + Math.max(0, first - t)}d`, `${base + Math.max(0, t - last)}d`];
 }
+
+export const SERIES_COUNT = 8;
+
+/**
+ * Campaign → colour slot 1..8 in creation order, so a campaign keeps its colour
+ * when others are added or the list re-sorts. Slots are never cycled: past
+ * eight, campaigns get null (neutral ink bar); the bar label still names them.
+ */
+export function seriesSlots(campaigns: readonly Pick<CampaignView, 'id' | 'createdAt'>[]): Map<string, number | null> {
+  const ordered = [...campaigns].sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id));
+  return new Map(ordered.map((c, i) => [c.id, i < SERIES_COUNT ? i + 1 : null]));
+}
+
+export const seriesVar = (slot: number | null | undefined) => (slot ? `var(--series-${slot})` : undefined);
+
+export const HEIGHTS = ['Default', '2x', '3x'] as const;
+export type ChartHeight = (typeof HEIGHTS)[number];
+
+/** Minimum visible rows per height option. Default fits the campaigns exactly (frappe's own sizing). */
+const MIN_ROWS: Record<ChartHeight, number | null> = { Default: null, '2x': 8, '3x': 12 };
+
+/** frappe's grid height for `rows` rows (mirrors make_grid_background), or 'auto' for Default. */
+export function containerHeight(
+  height: ChartHeight,
+  dims: { headerHeight: number; barHeight: number; padding: number },
+): number | 'auto' {
+  const rows = MIN_ROWS[height];
+  if (rows === null) return 'auto';
+  return dims.headerHeight + dims.padding + (dims.barHeight + dims.padding) * rows - 10;
+}
+
+export const isChartHeight = (v: unknown): v is ChartHeight => HEIGHTS.includes(v as ChartHeight);
