@@ -1,6 +1,6 @@
 # Launchdeck
 
-<img width="1709" height="1695" alt="util-launchdeck orca localhost-2" src="https://github.com/user-attachments/assets/55124019-2f21-4f7a-ad99-9c50f0dddb03" />
+<img width="1709" height="1456" alt="util-launchdeck orca localhost-4" src="https://github.com/user-attachments/assets/4ff78fe9-f0bf-45f0-8316-98b5d41d33cb" />
 
 Launchdeck is a local launch-readiness dashboard for one marketer on macOS. It has no login. Campaigns sit on a Gantt chart, and each campaign is bound to one or more AEM DAM folders. A watcher polls those folders and records what changed, when, who changed it, and the file type. Each campaign gets a readiness badge, computed in `packages/shared/src/status.ts`. The rules are checked in this order:
 
