@@ -1,5 +1,5 @@
 import { folderFailing } from '@launchdeck/shared';
-import type { FolderHealth } from '@launchdeck/shared';
+import type { Campaign, FolderHealth } from '@launchdeck/shared';
 import type { StreamStatus } from './sse.ts';
 import { formatRelative } from './time.ts';
 
@@ -33,3 +33,18 @@ export const STREAM_LABEL: Record<StreamStatus, string> = {
   connecting: 'CONNECTING',
   reconnecting: 'RECONNECTING',
 };
+
+/**
+ * Campaign to select when a watcher folder row is clicked. A folder can be bound to several
+ * campaigns: repeated clicks cycle through them, starting after the current selection.
+ */
+export function campaignForFolder(
+  campaigns: readonly Pick<Campaign, 'id' | 'folders'>[],
+  folderPath: string,
+  selectedId: string | null,
+): string | null {
+  const owners = campaigns.filter((c) => c.folders.includes(folderPath));
+  if (owners.length === 0) return null;
+  const i = owners.findIndex((c) => c.id === selectedId);
+  return owners[(i + 1) % owners.length]?.id ?? null;
+}

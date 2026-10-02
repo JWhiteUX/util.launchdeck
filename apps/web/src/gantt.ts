@@ -70,20 +70,14 @@ export function seriesSlots(campaigns: readonly Pick<CampaignView, 'id' | 'creat
 
 export const seriesVar = (slot: number | null | undefined) => (slot ? `var(--series-${slot})` : undefined);
 
-export const HEIGHTS = ['Default', '2x', '3x'] as const;
-export type ChartHeight = (typeof HEIGHTS)[number];
-
-/** Minimum visible rows per height option. Default fits the campaigns exactly (frappe's own sizing). */
-const MIN_ROWS: Record<ChartHeight, number | null> = { Default: null, '2x': 8, '3x': 12 };
-
-/** frappe's grid height for `rows` rows (mirrors make_grid_background), or 'auto' for Default. */
-export function containerHeight(
-  height: ChartHeight,
-  dims: { headerHeight: number; barHeight: number; padding: number },
-): number | 'auto' {
-  const rows = MIN_ROWS[height];
-  if (rows === null) return 'auto';
-  return dims.headerHeight + dims.padding + (dims.barHeight + dims.padding) * rows - 10;
+export interface LaneDims {
+  barHeight: number;
+  padding: number;
 }
 
-export const isChartHeight = (v: unknown): v is ChartHeight => HEIGHTS.includes(v as ChartHeight);
+/** Swimlane: an 80px lane with a 40px bar centred in it. */
+export const LANE: LaneDims = { barHeight: 40, padding: 40 };
+
+/** Chart height that fits the header plus every swimlane exactly (no trailing partial row). */
+export const lanesHeight = (headerHeight: number, lane: LaneDims, rows: number) =>
+  headerHeight + (lane.barHeight + lane.padding) * rows;

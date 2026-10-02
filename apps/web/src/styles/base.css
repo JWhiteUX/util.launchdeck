@@ -34,10 +34,16 @@ p { text-wrap: pretty; max-width: var(--measure-body); }
 .status-error { color: var(--status-error-fg); }
 
 /* ── Layout ─────────────────────────────────────────────── */
+/* The dashboard is a working surface, not a reading column: it runs wider than Ferrite's
+   --content-max with a tighter gutter so the timeline gets the room. The nav shares the frame. */
+:root {
+  --app-max: 1920px;
+  --app-gutter: clamp(var(--space-4), 2vw, var(--space-6));
+}
 .page {
-  max-width: var(--content-max);
+  max-width: var(--app-max);
   margin: 0 auto;
-  padding: var(--space-7) var(--page-gutter);
+  padding: var(--space-6) var(--app-gutter) var(--space-7);
 }
 
 /* ── Navigation ─────────────────────────────────────────── */
@@ -55,9 +61,9 @@ p { text-wrap: pretty; max-width: var(--measure-body); }
   justify-content: space-between;
   gap: var(--space-5);
   height: 100%;
-  max-width: var(--content-max);
+  max-width: var(--app-max);
   margin: 0 auto;
-  padding: 0 var(--page-gutter);
+  padding: 0 var(--app-gutter);
 }
 .nav__actions { display: flex; align-items: center; gap: var(--space-3); }
 
@@ -129,15 +135,30 @@ p { text-wrap: pretty; max-width: var(--measure-body); }
 
 /* Dashboard layout */
 .dashboard { display: grid; gap: var(--space-8); }
-.dashboard__lower {
+/* Timeline (campaign list 1 : chart 4) leads; the watcher is a supporting rail on its right.
+   The rail only sits alongside when the chart keeps a usable width (≥ ~620px); below that it
+   drops beneath the timeline, still ahead of the activity detail. */
+.dashboard__top {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-7);
   align-items: start;
 }
-@media (max-width: 960px) {
-  .dashboard__lower { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1280px) {
+  .dashboard__top { grid-template-columns: minmax(0, 1fr) 300px; gap: var(--space-6) var(--space-7); }
+  .dashboard__top[data-watcher='closed'] { grid-template-columns: minmax(0, 1fr); }
+  /* In the rail, rows bleed into the gutter so their text aligns with the column edge while
+     the hover and selected fills keep breathing room. */
+  .dashboard__watcher .health__folders { margin-inline: calc(var(--space-3) * -1); }
 }
+/* Full width under the timeline: folders tile instead of stretching one per line. */
+@media (min-width: 720px) and (max-width: 1279px) {
+  .dashboard__watcher .health__folders {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    column-gap: var(--space-5);
+  }
+}
+.dashboard__watcher[hidden] { display: none; }
 .dashboard section > .track { margin-bottom: var(--space-5); }
 .empty { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
 
@@ -155,6 +176,19 @@ p { text-wrap: pretty; max-width: var(--measure-body); }
   color: var(--color-accent);
 }
 .btn--ghost:hover { color: var(--color-accent-hover); text-decoration: underline; }
+/* Quiet icon toggle: the glyph carries state (panel filled = open); the box only appears on hover. */
+.btn--icon {
+  width: var(--control-h-s);
+  height: var(--control-h-s);
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-muted);
+}
+.btn--icon:hover { border-color: var(--color-border-strong); color: var(--color-text); }
+.btn--icon[aria-expanded='true'] { color: var(--color-text); }
+/* In a track rule, don't let the control make the row taller than its label. */
+.track > .btn--icon { margin-block: calc((var(--control-h-s) - 1lh) / -2); margin-right: calc(var(--space-2) * -1); }
 .btn--danger {
   background: transparent;
   color: var(--status-error-fg);

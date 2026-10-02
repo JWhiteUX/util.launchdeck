@@ -20,8 +20,11 @@
   align-items: center;
   justify-content: flex-end;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: var(--space-3) var(--space-6);
 }
+/* Label + segmented control wrap as one unit, never apart. */
+.gantt-view__control { display: flex; align-items: center; gap: var(--space-3); }
+.gantt-view__control > .label { color: var(--color-text-muted); }
 .gantt-scale {
   display: flex;
   border: var(--border-strong);
@@ -161,23 +164,43 @@
 .gantt-view .gantt .bar-label.big { fill: var(--color-text); }
 .gantt-view .gantt .bar-wrapper.bar--selected .bar-label.big { fill: var(--color-accent); }
 
-/* ── Accessible campaign list ────────────────────────────── */
-.gantt-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: var(--border-hair);
-}
-.gantt-list > li { border-bottom: var(--border-hair); }
-.gantt-list__item {
-  position: relative;
+/* ── Campaign list (left of the chart, 1:4) ──────────────── */
+/* One bordered table: the list is its first column. Rows line up with the chart's bar rows:
+   a header cell the height of frappe's header, then one row per campaign at
+   bar_height + padding (vars set by GanttView). */
+.gantt-view__body {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: var(--space-4);
+  grid-template-columns: minmax(256px, 1fr) minmax(0, 4fr);
+  /* Stretch: at 2×/3× the column runs the full chart height instead of stopping short. */
+  align-items: stretch;
+}
+
+.gantt-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: var(--border-hair);
+  border-right: none;
+}
+.gantt-list__head {
+  display: flex;
+  align-items: flex-end;
+  flex: none;
+  height: var(--gantt-header);
+  /* Baseline matches frappe's lower header row (day/week labels). */
+  padding: 0 var(--space-3) var(--space-3) var(--space-3);
+  color: var(--color-text-muted);
+}
+.gantt-list__rows { margin: 0; padding: 0; list-style: none; }
+.gantt-list__rows > li { border-top: var(--border-hair); }
+.gantt-list__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: center;
+  gap: var(--space-1) var(--space-2);
   width: 100%;
-  min-height: 44px;
-  padding: var(--space-2) var(--space-3);
+  height: calc(var(--gantt-row) - 1px);
+  padding: 0 var(--space-3) 0 calc(var(--space-3) - 2px);
   border: none;
   border-left: 2px solid transparent;
   background: transparent;
@@ -192,22 +215,34 @@
   background: var(--color-bg-alt);
 }
 .gantt-list__name {
-  display: inline-flex;
+  grid-column: 1 / -1;
+  display: flex;
   align-items: center;
   gap: var(--space-2);
+  min-width: 0;
   font-weight: var(--font-weight-medium);
   font-size: var(--font-size-body-s);
-  overflow-wrap: anywhere;
+  line-height: var(--line-height-label);
 }
+.gantt-list__name-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Dates indent to sit under the name, past the swatch. */
 .gantt-list__dates {
+  min-width: 0;
+  padding-left: calc(10px + var(--space-2));
   font-size: var(--font-size-label);
+  line-height: var(--line-height-label);
+  font-variant-numeric: tabular-nums;
   color: var(--color-text-muted);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+.gantt-list__item .pill { grid-column: 2; grid-row: 2; }
 
-@media (max-width: 560px) {
-  .gantt-list__item { grid-template-columns: minmax(0, 1fr) auto; }
-  .gantt-list__dates { grid-column: 1; grid-row: 2; }
-  .gantt-list__item .pill { grid-column: 2; grid-row: 1 / span 2; }
+/* Narrow: list stacks above the chart as a plain table; rows size to content. */
+@media (max-width: 640px) {
+  .gantt-view__body { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-4); }
+  .gantt-list { border-right: var(--border-hair); }
+  .gantt-list__head { height: auto; padding-top: var(--space-3); }
+  .gantt-list__item { height: auto; min-height: 48px; padding-block: var(--space-2); }
 }
-.gantt-view__toolbar .gantt-scale + .label { margin-left: var(--space-5); }

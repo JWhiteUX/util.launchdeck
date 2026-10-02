@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CampaignView } from '@launchdeck/shared';
-import { barClass, containerHeight, ganttId, isChartHeight, rangePadding, seriesSlots, seriesVar, tasksKey, toGanttTasks } from './gantt.ts';
+import { barClass, ganttId, LANE, lanesHeight, rangePadding, seriesSlots, seriesVar, tasksKey, toGanttTasks } from './gantt.ts';
 
 const campaign = (over: Partial<CampaignView> = {}): CampaignView => ({
   id: 'c1',
@@ -97,15 +97,9 @@ describe('seriesSlots', () => {
   });
 });
 
-describe('containerHeight', () => {
-  const dims = { headerHeight: 85, barHeight: 32, padding: 16 };
-  it('keeps frappe auto sizing for Default and sets minimum rows for 2x / 3x', () => {
-    expect(containerHeight('Default', dims)).toBe('auto');
-    expect(containerHeight('2x', dims)).toBe(85 + 16 + 48 * 8 - 10);
-    expect(containerHeight('3x', dims)).toBe(85 + 16 + 48 * 12 - 10);
-  });
-  it('validates stored values', () => {
-    expect(isChartHeight('2x')).toBe(true);
-    expect(isChartHeight('4x')).toBe(false);
+describe('lanesHeight', () => {
+  it('fits the chart to header plus 80px lanes exactly', () => {
+    expect(LANE.barHeight + LANE.padding).toBe(80);
+    expect(lanesHeight(85, LANE, 4)).toBe(85 + 80 * 4);
   });
 });

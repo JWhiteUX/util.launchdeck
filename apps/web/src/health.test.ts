@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { FolderHealth } from '@launchdeck/shared';
-import { STREAM_LABEL, folderLabel, folderRowStatus } from './health.ts';
+import { STREAM_LABEL, campaignForFolder, folderLabel, folderRowStatus } from './health.ts';
 
 const now = Date.parse('2026-10-01T12:00:00.000Z');
 const folder = (over: Partial<FolderHealth> = {}): FolderHealth => ({
@@ -64,5 +64,27 @@ describe('folderRowStatus', () => {
 describe('STREAM_LABEL', () => {
   it('names each stream state', () => {
     expect(STREAM_LABEL).toEqual({ open: 'LIVE', connecting: 'CONNECTING', reconnecting: 'RECONNECTING' });
+  });
+});
+
+describe('campaignForFolder', () => {
+  const a = { id: 'a', folders: ['/content/dam/x', '/content/dam/shared'] };
+  const b = { id: 'b', folders: ['/content/dam/shared'] };
+  const c = { id: 'c', folders: ['/content/dam/y'] };
+
+  it('returns the campaign bound to the folder', () => {
+    expect(campaignForFolder([a, b, c], '/content/dam/y', null)).toBe('c');
+    expect(campaignForFolder([a, b, c], '/content/dam/x', 'c')).toBe('a');
+  });
+
+  it('cycles through campaigns sharing a folder', () => {
+    expect(campaignForFolder([a, b, c], '/content/dam/shared', null)).toBe('a');
+    expect(campaignForFolder([a, b, c], '/content/dam/shared', 'a')).toBe('b');
+    expect(campaignForFolder([a, b, c], '/content/dam/shared', 'b')).toBe('a');
+    expect(campaignForFolder([a, b, c], '/content/dam/shared', 'c')).toBe('a');
+  });
+
+  it('returns null for an unbound folder', () => {
+    expect(campaignForFolder([a, b, c], '/content/dam/gone', 'a')).toBeNull();
   });
 });

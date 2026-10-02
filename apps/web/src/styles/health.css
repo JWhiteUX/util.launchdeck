@@ -4,21 +4,37 @@
 .health > .track { margin-bottom: 0; }
 .health__poll { font-size: var(--font-size-button-s); white-space: nowrap; }
 .health__summary { margin: 0; }
+/* Break between facts, never inside one ("next 04:21 PM" stays together). */
+.health__fact { white-space: nowrap; }
 
 .health__folders {
   display: grid;
   margin: 0;
   padding: 0;
   list-style: none;
+  border-top: var(--border-hair);
 }
+.health__folders > li { border-bottom: var(--border-hair); }
 .health__folder {
   display: grid;
   gap: var(--space-1);
-  padding: var(--space-3) 0;
-  border-bottom: var(--border-hair);
+  width: 100%;
   min-width: 0;
+  padding: var(--space-3) var(--space-3) var(--space-3) calc(var(--space-3) - 2px);
+  border: none;
+  border-left: 2px solid transparent;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-standard);
 }
-.health__folder:first-child { padding-top: 0; }
+.health__folder:hover { background: var(--color-bg-alt); }
+.health__folder[aria-current='true'] {
+  border-left-color: var(--color-accent);
+  background: var(--color-bg-alt);
+}
 
 .health__row { margin-bottom: 0; min-width: 0; }
 .health__row .track__rule { min-width: var(--space-4); }
@@ -33,11 +49,19 @@
 
 .health__meta {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2) var(--space-3);
+  align-items: baseline;
+  gap: var(--space-3);
+  min-width: 0;
   font-size: var(--font-size-label);
 }
-.health__path { overflow-wrap: anywhere; min-width: 0; }
-.health__count { color: var(--color-text-muted); letter-spacing: var(--tracking-label); }
-.health__error { margin: 0; overflow-wrap: anywhere; }
+/* Path truncates (full path in the title); the count holds a right-aligned column under the status. */
+.health__path { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.health__count {
+  flex: none;
+  margin-left: auto;
+  color: var(--color-text-muted);
+  letter-spacing: var(--tracking-label);
+  font-variant-numeric: tabular-nums;
+}
+.health__flags { display: flex; flex-wrap: wrap; gap: var(--space-2); padding-top: var(--space-1); }
+.health__error { display: block; overflow-wrap: anywhere; }

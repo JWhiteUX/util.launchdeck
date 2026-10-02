@@ -182,7 +182,7 @@ Add a mono caption in the bottom-left that describes the required shot. This str
 - **Bars** have square corners (`rx/ry = 0`) and no progress fill. Each campaign gets a categorical colour, `--series-1` to `--series-8`, assigned in creation order so it never changes when others are added. Past eight campaigns, bars fall back to ink; colours are never cycled. Bar labels are sans 500 at 14px in `--color-on-series`.
 - **Series colours** come from the "Clear Oxide" revision, with separate dark-mode steps. Checker results are in `design/palette-revision.md`. They are identity only: never status, never oxide.
 - **Status** is not drawn on the bars. The list under the chart pairs each campaign's colour swatch and name with its status badge, which always carries text.
-- **Height** toggle (`DEFAULT`, `2×`, `3×`) sits beside the scale control. Default fits the campaigns; 2× and 3× reserve at least 8 and 12 rows. The choice is remembered per browser.
+- **Swimlanes** are a fixed 80px with a 40px bar centred in each. The chart fits the header plus every lane exactly, and the campaign list's rows line up with the lanes. There is no height control.
 - **Grid** lines are hairlines in `--color-border`. Header text uses the mono label style. The weekend or today column uses `--color-bg-alt`.
 - **Today marker** is a 2px `--color-accent` vertical line.
 - **Selected bar** gets a 2px `--color-accent` outline.

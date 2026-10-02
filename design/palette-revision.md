@@ -89,7 +89,7 @@ This revision changes colour only. Token names, layout, type, spacing and compon
 | Tightest series label: `--paper-0` on `--series-3` `#007FA0` | 4.50:1 |
 | `--color-accent` on `--color-accent-tint` | 4.30:1. **Don't use for text.** |
 
-Selected and unreviewed rows use ink text on the tint, and highlighted headers use `--oxide-700`.
+Selected rows use ink text on the tint, and highlighted headers use `--oxide-700`. Unreviewed activity rows are not tinted: a 2px `--color-accent` left rule marks them (as on selected campaign rows), because a tint across a fully unreviewed table reads as a brown wash.
 
 ## Series palette check
 

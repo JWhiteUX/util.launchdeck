@@ -70,6 +70,6 @@
 .feed__when { font-size: var(--font-size-spec); }
 .feed__jcr { font-size: var(--font-size-label); letter-spacing: var(--tracking-label); }
 
-.feed__row--unreviewed > td { background: var(--color-accent-tint); }
+/* Unreviewed rows are marked by the oxide rule alone; a tinted fill turned whole tables brown. */
 .feed__row > td:first-child { border-left: 2px solid transparent; }
 .feed__row--unreviewed > td:first-child { border-left-color: var(--color-accent); }

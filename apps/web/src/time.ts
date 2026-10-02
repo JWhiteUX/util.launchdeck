@@ -8,6 +8,7 @@ const dateTime = new Intl.DateTimeFormat(undefined, {
   minute: '2-digit',
 });
 const dateOnly = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: '2-digit' });
+const monthDay = new Intl.DateTimeFormat(undefined, { month: 'short', day: '2-digit' });
 
 export function formatLocalDateTime(iso: string | null, fmt: Intl.DateTimeFormat = dateTime): string {
   if (!iso) return '—';
@@ -20,6 +21,24 @@ export function formatCalendarDate(ymd: string, fmt: Intl.DateTimeFormat = dateO
   const [y, m, d] = ymd.split('-').map(Number);
   if (!y || !m || !d) return ymd;
   return fmt.format(new Date(y, m - 1, d));
+}
+
+/**
+ * Compact calendar range for tight columns: "Sep 14 – Oct 20" within the current year,
+ * "Sep 14 – Oct 20, 2027" within another year, full dates when the range spans years.
+ */
+export function formatDateRange(
+  start: string,
+  end: string,
+  currentYear: number = new Date().getFullYear(),
+  fmts: { short: Intl.DateTimeFormat; full: Intl.DateTimeFormat } = { short: monthDay, full: dateOnly },
+): string {
+  const startYear = Number(start.slice(0, 4));
+  if (startYear !== Number(end.slice(0, 4))) {
+    return `${formatCalendarDate(start, fmts.full)} – ${formatCalendarDate(end, fmts.full)}`;
+  }
+  const range = `${formatCalendarDate(start, fmts.short)} – ${formatCalendarDate(end, fmts.short)}`;
+  return startYear === currentYear ? range : `${range}, ${startYear}`;
 }
 
 /** "just now", "4 min ago", "3 h ago", "2 d ago". */
